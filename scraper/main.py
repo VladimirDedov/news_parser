@@ -20,7 +20,7 @@ def collect_data():
     for item in article_html_list:  # получаем список статей со сслыками на них
         text_article = item.text
         href = item['href']
-        dict_of_article[href] = text_article.replace('"','').replace("'",'').strip()
+        dict_of_article[href] = text_article.strip()
 
     for href, article_title in dict_of_article.items():
         list_of_data = get_data_from_page_nurkz(href, article_title, headers, url)# Получение списка данных одной статьи

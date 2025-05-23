@@ -1,26 +1,36 @@
 import sqlite3
-from datetime import datetime
+
 
 def write_to_bd(list_of_data: list):
     flag = True
     try:
-        conn = sqlite3.connect('nurkz.db')  # connected for sd.db or create BD
-        cur = conn.cursor()  # for sql requests in BD
-        cur.execute("""
-            CREATE TABLE IF NOT EXISTS nurkz (
-                id INTEGER PRIMARY KEY AUTOINCREMENT,
-                id_article TEXT,
-                url_article TEXT,
-                title_article TEXT,
-                text_article TEXT,
-                created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-            )
-        """)
+        with sqlite3.connect('nurkz.db') as conn:  # connected for sd.db or create BD
+            cur = conn.cursor()  # for sql requests in BD
+            cur.execute("""
+                CREATE TABLE IF NOT EXISTS nurkz (
+                    id INTEGER PRIMARY KEY AUTOINCREMENT,
+                    id_article TEXT,
+                    url_article TEXT,
+                    title_original_article TEXT,
+                    text_original_article TEXT,
+                    title_neiro_article TEXT DEFAULT NULL,
+                    text_neiro_article TEXT DEFAULT NULL,
+                    time_created TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+                    is_published BOOLEAN DEFAULT FALSE
+                )
+            """)
+            conn.commit()
     except:
-        flag = False
         print("Не удалось подключиться или создать БД")
 
-    conn.commit()
+    try:
+        cur.execute("INSERT INTO nurkz(id_article, url_article, title_original_article, "
+                    "text_original_article) VALUES(?,?,?,?)",
+                    tuple(list_of_data))
+        conn.commit()
+    except:
+        print("Не удалось записать данные")
 
-    cur.execute("INSERT INTO nurkz(id_article, url_article, title_article, text_article) VALUES(?,?,?,?)", tuple(list_of_data))
-    conn.commit()
+
+def read_from_bd():
+    pass
