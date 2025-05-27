@@ -8,14 +8,13 @@ def parse_text_from_tags_p(list_tags_p) -> str:
     text: str = ''''''
     for tag in list_tags_p:
         text += tag.text
-    print(text)
     return text
 
 
 def get_data_from_page_nurkz(href, name_article, headers: list, url: str) -> list:
     """Возращает список данных из статьи. id, url, title, text"""
     url = f"https://www.nur.kz"+href
-    list_of_data_from_article = [href[-1:-15:-1], url, name_article]
+    list_of_data_from_article = [href[-1:-15:-1].replace('/','-'), url, name_article]
 
     responce = requests.get(url=url, headers=headers)
     responce.encoding = 'utf-8'
