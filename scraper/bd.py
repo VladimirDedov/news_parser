@@ -54,7 +54,7 @@ def write_article_to_bd(list_of_data: list, id_article: str = None, original: bo
 def write_image_to_bd(list_of_data: list):
     with get_db_connection() as cur:
         cur.execute(
-            "INSERT OR IGNORE INTO image(id_article, image_url, image_path, image_text)"
+            "INSERT OR IGNORE INTO image(id_article, image_path, image_path_with_text, image_text)"
                 "VALUES(?,?,?,?)",
                 tuple(list_of_data)
         )

@@ -7,6 +7,8 @@ from bd import write_article_to_bd, read_from_bd_origin_article
 from ai.ai_generate import get_context_from_ai, get_url_image_from_ai
 from scraper.bd import write_image_to_bd
 from scraper.image_downloader import download_image
+from Scraper_News.BingImageCreator.src.bing_main import create_bing_image
+from image_editor import add_text_to_image
 
 
 def collect_data():
@@ -14,6 +16,7 @@ def collect_data():
     href: str
     text_article: str
     id_article_list = []
+    count: int = 0
 
     ua = UserAgent()
     headers = {"user-agent": f"{ua.random}"}
@@ -34,12 +37,14 @@ def collect_data():
         # Запись в базу данных
         write_article_to_bd(list_of_data)
         # Список айди добавленных статей
-        id_article_list.append(list_of_data[0])
+        id_article_list.append(list_of_data[1])
         list_of_data.clear()
-        break  # Заглушка, потом убрать
+        count += 1
+        if count == 2:
+            break  # Заглушка, потом убрать
 
     # Читаем название и текст статьи с бд
-    id_article, original_title, original_text = read_from_bd_origin_article(id_article_list[0])  # продумать логику
+    id_article, original_title, original_text = read_from_bd_origin_article(id_article_list[1])  # продумать логику
 
     # Полчаем Заголовок, содержание и текст для картинки с Нейронки
     text_ai = get_context_from_ai(original_text)
@@ -55,19 +60,13 @@ def collect_data():
     print(f"text for image - {image_text}")
     print(f"text - {text_ai}")
     print(f"promt - {prompt_for_image}")
-    # Генерируем картинку
-    image_url = get_url_image_from_ai(prompt_for_image)
-    print(f"Image - {image_url}")
-    # Сохраняем картинку локально
-    while True:
-        try:
-            image_path = download_image(image_url, id_article)
-            break
-        except Exception as e:
-            print(f"Ошибка при загрузке картинки. пытаюсь еще раз {e}")
-            image_url = get_url_image_from_ai(prompt_for_image)
-    # Записываем в базу id_article, image_url, image_path, image_text
-    list_image = [id_article, image_url, image_path, image_text]
+    # Генерируем картинку. промпт - оригинальный заголовок
+    create_bing_image(prompt_for_image, id_article)
+    #Отправить все данные в телеграмм СОЗДАТЕЛЮ, с правом выбора картинки - это потом
+    image_path_with_text, image_path = add_text_to_image(id_article, image_text)
+
+    # # Записываем в базу id_article, image_url, image_path, image_text
+    list_image = [id_article, image_path, image_path_with_text, image_text]
     write_image_to_bd(list_image)
 
 
