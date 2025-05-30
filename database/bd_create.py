@@ -11,6 +11,7 @@ def create_table(cur):
                     text_neiro_article TEXT DEFAULT NULL,
                     prompt_image TEXT,
                     time_created TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+                    is_view BOOLEAN DEFAULT FALSE,
                     is_published BOOLEAN DEFAULT FALSE
                 )
             """)

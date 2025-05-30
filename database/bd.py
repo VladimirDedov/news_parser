@@ -4,7 +4,8 @@ from bd_create import create_table
 
 
 @contextmanager
-def get_db_connection(db_name: str = "nurkz.db"):  # Подключение к БД
+def get_db_connection(db_name: str = "nurkz.db"):
+    """Подключение к БД"""
     conn = sqlite3.connect(db_name)
     try:
         cur = conn.cursor()
