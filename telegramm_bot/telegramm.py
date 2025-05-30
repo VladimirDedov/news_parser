@@ -14,13 +14,11 @@ bot = Bot(token=BOT_TOKEN)
 dp = Dispatcher()
 dp.include_router(parse_router)
 
-async def main():
-    await bot.delete_webhook(drop_pending_updates=True)#Пропускает обновления пока в оффлайне
+
+async def run_telegram_bot():
+    await bot.delete_webhook(drop_pending_updates=True)  # Пропускает обновления пока в оффлайне
     await dp.start_polling(bot)
 
-asyncio.run(main())
 
-class Message:
-
-    def send_message(self):
-        pass
+def run_telegramm():
+    asyncio.run(run_telegram_bot())

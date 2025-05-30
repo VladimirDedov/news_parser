@@ -2,7 +2,7 @@ import requests
 from bs4 import BeautifulSoup
 from fake_useragent import UserAgent
 
-from parse_page import get_data_from_page_nurkz
+from .parse_page import get_data_from_page_nurkz
 from database.bd import write_article_to_bd
 
 
@@ -27,7 +27,7 @@ def collect_data(domain: str = 'https://www.nur.kz/'):
         text_article = item.text
         href = item['href']
         dict_of_article[href] = text_article.strip()
-
+        break
     for href, article_title in dict_of_article.items():
         # Получение списка данных одной статьи
         list_of_data = get_data_from_page_nurkz(href, article_title, headers, url)

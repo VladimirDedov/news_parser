@@ -1,6 +1,6 @@
 import sqlite3
 from contextlib import contextmanager
-from bd_create import create_table
+from .bd_create import create_table
 
 
 @contextmanager
