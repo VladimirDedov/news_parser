@@ -1,7 +1,6 @@
 from aiogram import Bot, Router
 from aiogram import types
 from aiogram.filters import CommandStart, Command
-
 from scraper.collect_data import collect_data
 
 parse_router = Router()
@@ -16,5 +15,5 @@ async def start_cmd(message: types.Message):
 
 @parse_router.message(Command("nurkz"))
 async def start_parse_nurkz(message: types.Message):
-    id_article_list = collect_data("https://www.nur.kz/")
+    id_article_list = await collect_data("https://www.nur.kz/")
     await message.answer("Отправить список заголовков статей с номерами, для выбора, чтобы обрабатывать в ИИ")

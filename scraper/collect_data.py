@@ -1,12 +1,13 @@
 import requests
 from bs4 import BeautifulSoup
 from fake_useragent import UserAgent
+from flask import session
 
 from .parse_page import get_data_from_page_nurkz
-from database.bd import write_article_to_bd
+from Scraper_News.telegramm_bot.core.database.orm_query import write_article_to_bd
 
 
-def collect_data(domain: str = 'https://www.nur.kz/'):
+async def collect_data(session, domain: str = 'https://www.nur.kz/'):
     """Парсинг данных с сайтов"""
 
     dict_of_article: dict = {}
@@ -28,11 +29,13 @@ def collect_data(domain: str = 'https://www.nur.kz/'):
         href = item['href']
         dict_of_article[href] = text_article.strip()
         break
+
     for href, article_title in dict_of_article.items():
         # Получение списка данных одной статьи
         list_of_data = get_data_from_page_nurkz(href, article_title, headers, url)
+        print(list_of_data)
         # Запись в базу данных
-        write_article_to_bd(list_of_data)
+        await write_article_to_bd(list_of_data = list_of_data)
         # Список айди добавленных статей
         id_article_list.append(list_of_data[1])
         list_of_data.clear()
