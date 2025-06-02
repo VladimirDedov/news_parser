@@ -1,14 +1,18 @@
 from ai.ai_generate import get_context_from_ai
 from database.bd import write_image_to_bd
 from Scraper_News.BingImageCreator.src.bing_main import create_bing_image
-from database.bd import read_from_bd_origin_article
-from database.bd import write_article_to_bd
-from image_editor import add_text_to_image
+from telegramm_bot.core.database.orm_query import read_from_bd_origin_article
+from telegramm_bot.core.database.orm_query import write_article_to_bd
+from .image_editor import add_text_to_image
 
-def create_neiro_article(id_article):
+
+async def create_neiro_article(id):
     """Обработка статьи с помощь ИИ и запись в БД"""
     # Читаем название и текст статьи с бд
-    original_title, original_text = read_from_bd_origin_article(id_article)  # продумать логику
+    id_article, original_title, original_text = await read_from_bd_origin_article(id)  # продумать логику
+    print(id_article)
+    print(original_title)
+    print(original_text)
 
     # Полчаем Заголовок, содержание и текст для картинки с Нейронки
     text_ai = get_context_from_ai(original_text)
@@ -18,12 +22,7 @@ def create_neiro_article(id_article):
 
     # Запись в БД обработанной статьи
     list_neiro = [title_ai, text_ai, prompt_for_image]
-    write_article_to_bd(list_neiro, id_article, original=False)
-
-    print(f"title ai - {title_ai}")
-    print(f"text for image - {image_text}")
-    print(f"text - {text_ai}")
-    print(f"promt - {prompt_for_image}")
+    await write_article_to_bd(list_neiro, id_article, original=False)
 
     # Генерируем картинку. промпт - сгенерирован нейронкой
     create_bing_image(prompt_for_image, id_article)
@@ -33,4 +32,4 @@ def create_neiro_article(id_article):
 
     # # Записываем в базу id_article, image_url, image_path, image_text
     list_image = [id_article, image_path, image_path_with_text, image_text]
-    write_image_to_bd(list_image)
+    await write_image_to_bd(list_image)

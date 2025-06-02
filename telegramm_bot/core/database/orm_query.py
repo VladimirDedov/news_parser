@@ -1,8 +1,10 @@
+from datetime import date
 from requests import session
-from sqlalchemy import select, update, insert
+from sqlalchemy import select, update, insert, func
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import Bundle
 from aiogram import types
+from sympy.polys.polyconfig import query
 
 from .engine import engine
 from .models import Image, Article
@@ -10,7 +12,7 @@ from .models import Image, Article
 
 async def write_article_to_bd(list_of_data: list, id_article: str = None, original: bool =
 True):
-   async with AsyncSession(engine) as session:
+    async with AsyncSession(engine) as session:
         if original:
             try:
                 # Проверка, существует ли статья
@@ -50,7 +52,7 @@ True):
                     article.text_neiro_article = list_of_data[1]
                     article.prompt_image = list_of_data[2]
                     await session.commit()
-                    print(f"Обновлена статья - {id_article}")
+                    print(f"Обновлена статья - {list_of_data[0]}")
                 else:
                     print(f"Статья с id {id_article} не найдена")
             except Exception as e:
@@ -58,20 +60,27 @@ True):
                 print(f"Ошибка {e}")
 
 
-async def read_from_bd_origin_article(id_article: str):
-    article = session.execute(
-        select(Article.id_article, Article.title_original_article, Article.text_original_article).where(
-            Article.id_article == id_article).scalar_one_or_none()
-    )
-    return article
+async def read_from_bd_origin_article(id: str):
+    async with AsyncSession(engine) as session:
+        article = await session.execute(
+            select(Article.id_article, Article.title_original_article, Article.text_original_article).where(
+                Article.id == id)
+        )
+    return article.first()
 
 
 async def write_image_to_bd(list_of_data: list):
     pass
 
 
-async def read_all_today_article(session: AsyncSession):
-    pass
+async def read_all_today_article() -> dict[str, str]:
+    async with AsyncSession(engine) as session:
+        query = await session.execute(select(Article.id, Article.title_original_article).where(
+            func.date(Article.date_created) == date.today(),
+            Article.is_view == False)
+        )
+
+        return {id: title for id, title in query.all()}
 
 # async def orm_get_all_list(table_name: str, session: AsyncSession):
 #     model_class_name = __get_model_class_name(table_name)

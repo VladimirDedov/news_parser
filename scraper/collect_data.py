@@ -14,6 +14,7 @@ async def collect_data(session, domain: str = 'https://www.nur.kz/'):
     href: str
     text_article: str
     id_article_list = []
+    count = 0
 
     ua = UserAgent()
     headers = {"user-agent": f"{ua.random}"}
@@ -28,7 +29,9 @@ async def collect_data(session, domain: str = 'https://www.nur.kz/'):
         text_article = item.text
         href = item['href']
         dict_of_article[href] = text_article.strip()
-        break
+        if count > 3:
+            break
+        count +=1
 
     for href, article_title in dict_of_article.items():
         # Получение списка данных одной статьи

@@ -6,8 +6,10 @@ from g4f import models
 
 def get_context_from_ai(text: str, title: bool = False, image_text: bool = False, prompt: bool = False) -> str:
     """Генерирует заголовок, текст статьи и описание для картинки"""
+
     model_list = ["gpt-4", "gpt-4-turbo", "gpt-3.5-turbo"]
     client = Client()
+
     if title and image_text:
         ask_text = f"Перепиши заголовок другими словами от пяти до 7 слов. Заголовок - {text}"
     elif title:
@@ -38,15 +40,13 @@ def get_context_from_ai(text: str, title: bool = False, image_text: bool = False
     return response.choices[0].message.content
 
 
-def get_url_image_from_ai(prompt_image: str) -> str:
-    """Генерация картинки и возврат урл"""
-    client = Client()
-    response = client.images.generate(
-        model="dall_e_3",
-        prompt=prompt_image,
-        response_format="url"
-    )
-
-    return response.data[0].url
-
-
+# def get_url_image_from_ai(prompt_image: str) -> str:
+#     """Генерация картинки и возврат урл"""
+#     client = Client()
+#     response = client.images.generate(
+#         model="dall_e_3",
+#         prompt=prompt_image,
+#         response_format="url"
+#     )
+#
+#     return response.data[0].url
