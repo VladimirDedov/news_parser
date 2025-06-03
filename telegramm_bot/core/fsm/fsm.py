@@ -5,6 +5,7 @@ from aiogram.fsm.state import StatesGroup, State
 
 class Add_Neiro_Article(StatesGroup):
     id = State()
+    id_image = State()
 
 
 # FSM_LIST = [

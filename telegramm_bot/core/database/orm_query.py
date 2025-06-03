@@ -1,4 +1,5 @@
 from datetime import date
+from typing import Tuple
 from requests import session
 from sqlalchemy import select, update, insert, func
 from sqlalchemy.ext.asyncio import AsyncSession
@@ -16,16 +17,13 @@ True):
         if original:
             try:
                 # Проверка, существует ли статья
-                print('True article')
                 existing = await session.execute(
                     select(Article).where(Article.id_article == list_of_data[0])
                 )
                 result = existing.scalar_one_or_none()
-                print(result)
                 if result:
                     print(f"{list_of_data[2]} - Статья уже была, пропускаем.")
                 else:
-                    print('new article')
                     new_article = Article(
                         id_article=list_of_data[0],
                         url_article=list_of_data[1],
@@ -41,7 +39,7 @@ True):
                 print(f"Ошибка {e}")
         else:
             try:
-                # Обновление полей нейросети
+                # Обновление полей полученных от нейросети
                 result = await session.execute(
                     select(Article).where(Article.id_article == id_article)
                 )
@@ -51,6 +49,7 @@ True):
                     article.title_neiro_article = list_of_data[0]
                     article.text_neiro_article = list_of_data[1]
                     article.prompt_image = list_of_data[2]
+                    article.image_text = list_of_data[3]
                     await session.commit()
                     print(f"Обновлена статья - {list_of_data[0]}")
                 else:
@@ -60,7 +59,15 @@ True):
                 print(f"Ошибка {e}")
 
 
-async def read_from_bd_origin_article(id: str):
+async def get_exists_neiro_article(id) -> Tuple[str, str, str]:
+    async with AsyncSession(engine) as session:
+        query = await session.execute(
+            select(Article.image_text, Article.id_article, Article.prompt_image).where(Article.id == id)
+        )
+        return query.first()
+
+
+async def read_from_bd_origin_article(id: str) -> Tuple[str, str, str]:
     async with AsyncSession(engine) as session:
         article = await session.execute(
             select(Article.id_article, Article.title_original_article, Article.text_original_article).where(
@@ -69,8 +76,27 @@ async def read_from_bd_origin_article(id: str):
     return article.first()
 
 
-async def write_image_to_bd(list_of_data: list):
-    pass
+async def write_image_to_bd(dict_of_data: list):
+    async with AsyncSession(engine) as session:
+        try:
+            new_article = Image(
+                id_article=dict_of_data.get("id_article"),
+                image_url=dict_of_data.get("image_url"),
+                image_path_1=dict_of_data.get(1),
+                image_path_2=dict_of_data.get(2),
+                image_path_3=dict_of_data.get(3),
+                image_path_4=dict_of_data.get(4),
+                image_path_with_text=dict_of_data.get("image_path_with_text"),
+                image_text=dict_of_data.get("image_text"),
+                is_published=True
+            )
+            print('commit image')
+            session.add(new_article)
+            await session.commit()
+            print(f"Добавлена новая картинка - {dict_of_data.get("image_path_with_text")}")
+        except Exception as e:
+            print("Не удалось записать данные картинки в базу данных")
+            print(f"Ошибка {e}")
 
 
 async def read_all_today_article() -> dict[str, str]:
@@ -81,30 +107,3 @@ async def read_all_today_article() -> dict[str, str]:
         )
 
         return {id: title for id, title in query.all()}
-
-# async def orm_get_all_list(table_name: str, session: AsyncSession):
-#     model_class_name = __get_model_class_name(table_name)
-#     query = select(Bundle("lst", model_class_name.name, model_class_name.id, model_class_name.is_published))
-#     result = await session.execute(query)
-#     return result.scalars().all()
-#
-#
-# # get one record
-# async def orm_get_row(session: AsyncSession, table_name: str, id: int):
-#     model_class_name = __get_model_class_name(table_name)
-#     query = select(model_class_name).where(model_class_name.id == id)
-#     result = await session.execute(query)
-#     return result.scalar()
-#
-#
-# async def orm_add_user(message: types.Message, session: AsyncSession):
-#     query = select(User.user_id)
-#     result = await session.execute(query)
-#     lst_users = result.scalars().all()
-#     if message.from_user.id not in lst_users:
-#         obj = User(
-#             user_id=message.from_user.id,
-#             name=message.from_user.first_name
-#         )
-#         session.add(obj)
-#         await session.commit()

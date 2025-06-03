@@ -24,6 +24,7 @@ class Article(Base):
     title_neiro_article: Mapped[Optional[str]] = mapped_column(Text, default=None, nullable=True)
     text_neiro_article: Mapped[Optional[str]] = mapped_column(Text, default=None, nullable=True)
     prompt_image: Mapped[Optional[str]] = mapped_column(Text, default=None, nullable=True)
+    image_text: Mapped[Optional[str]] = mapped_column(Text, default=None, nullable=True)
     is_view: Mapped[bool] = mapped_column(default=False)
     is_published: Mapped[bool] = mapped_column(default=False)
 
