@@ -11,9 +11,11 @@ def get_context_from_ai(text: str, title: bool = False, image_text: bool = False
     client = Client()
 
     if title and image_text:
-        ask_text = f"Перепиши заголовок другими словами от пяти до 7 слов. Заголовок - {text}"
+        ask_text = (f"Перепиши заголовок другими словами от пяти до 7 слов. Только один заголовок, без вариантов "
+                    f"выбора. Заголовок - {text}")
     elif title:
-        ask_text = f"Придумай заголовок для статьи, проанализировав её. Без ковычек. - {text}"
+        ask_text = (f"Придумай заголовок для статьи, проанализировав её. Без ковычек. Только один заголовок, "
+                    f"без вариантов выбора. - {text}")
     elif prompt:
         ask_text = (f"Напиши промпт для генерации картинки. Только суть, без фамилий, без каких либо твоих "
                     f"дополнений и лишних вопросов. максимум 480 символов. -"
@@ -38,15 +40,3 @@ def get_context_from_ai(text: str, title: bool = False, image_text: bool = False
             continue
 
     return response.choices[0].message.content
-
-
-# def get_url_image_from_ai(prompt_image: str) -> str:
-#     """Генерация картинки и возврат урл"""
-#     client = Client()
-#     response = client.images.generate(
-#         model="dall_e_3",
-#         prompt=prompt_image,
-#         response_format="url"
-#     )
-#
-#     return response.data[0].url

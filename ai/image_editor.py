@@ -58,7 +58,7 @@ def add_text_to_image(image_path: str, text_for_image: str, id_article: str) -> 
         line_width = bbox[2] - bbox[0]
         x = (img.width - line_width) // 2
         y = y_start + i * line_height
-        draw_text_with_outline(draw, (x, y), line, font, text_color="white", outline_color="black", outline_width=2)
+        draw_text_with_outline(draw, (x, y), line, font, text_color="white", outline_color="black", outline_width=3)
 
     img.save(image_path_with_text)
     return image_path_with_text

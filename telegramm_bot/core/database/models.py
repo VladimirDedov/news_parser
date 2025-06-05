@@ -1,6 +1,4 @@
 from typing import List, Optional
-
-from jeepney.low_level import Boolean
 from sqlalchemy import Text, String, DateTime, func
 from sqlalchemy.orm import DeclarativeBase
 from sqlalchemy.orm import Mapped

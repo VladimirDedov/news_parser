@@ -1,12 +1,15 @@
+import asyncio
 from datetime import date
 from typing import Tuple
 from requests import session
 from sqlalchemy import select, update, insert, func
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import Bundle
+
 from aiogram import types
 from sympy.polys.polyconfig import query
 
+from BingImageCreator.src.BingImageCreator import debug
 from .engine import engine
 from .models import Image, Article
 
@@ -62,18 +65,10 @@ True):
 async def get_exists_neiro_article(id) -> Tuple[str, str, str]:
     async with AsyncSession(engine) as session:
         query = await session.execute(
-            select(Article.image_text, Article.id_article, Article.prompt_image).where(Article.id == id)
-        )
-        return query.first()
-
-
-async def read_from_bd_origin_article(id: str) -> Tuple[str, str, str]:
-    async with AsyncSession(engine) as session:
-        article = await session.execute(
-            select(Article.id_article, Article.title_original_article, Article.text_original_article).where(
+            select(Article.image_text, Article.id_article, Article.prompt_image, Article.text_neiro_article).where(
                 Article.id == id)
         )
-    return article.first()
+        return query.first()
 
 
 async def write_image_to_bd(dict_of_data: list):
@@ -99,11 +94,46 @@ async def write_image_to_bd(dict_of_data: list):
             print(f"Ошибка {e}")
 
 
+async def write_is_publised_article(id_article):
+    async with AsyncSession(engine) as session:
+        try:
+            await session.execute(
+                update(Article)
+                .where(Article.id_article == id_article)
+                .values(is_published=1)
+            )
+            await session.commit()
+        except Exception as e:
+            print(f"Ошибка при обновлении is_published: \n{e}")
+
+
 async def read_all_today_article() -> dict[str, str]:
     async with AsyncSession(engine) as session:
         query = await session.execute(select(Article.id, Article.title_original_article).where(
             func.date(Article.date_created) == date.today(),
-            Article.is_view == False)
+            Article.is_published == False)
         )
 
         return {id: title for id, title in query.all()}
+
+
+async def read_from_bd_origin_article(id: str) -> Tuple[str, str, str]:
+    async with AsyncSession(engine) as session:
+        article = await session.execute(
+            select(Article.id_article, Article.title_original_article, Article.text_original_article).where(
+                Article.id == id)
+        )
+    return article.first()
+
+
+async def read_image_path_with_text(id_article: str) -> str:
+    async with AsyncSession(engine) as session:
+        query = await session.execute(
+            select(Image.image_path_with_text).where(Image.id_article == id_article)
+        )
+
+        return query.first()
+
+
+if __name__ == '__main__':
+    print(asyncio.run(read_image_path_with_text("-kr-ayinavozar")))

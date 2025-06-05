@@ -15,7 +15,7 @@ async def create_neiro_article(id) -> Tuple[str, str, str]:
     tuple_of_neiro_article = await get_exists_neiro_article(id)
     print(f"Кортеж сущействующей статьи {tuple_of_neiro_article}")
     if all(tuple_of_neiro_article):
-        image_text, id_article, prompt_for_image = tuple_of_neiro_article
+        image_text, id_article, prompt_for_image,  text_ai= tuple_of_neiro_article
     else:
         id_article, original_title, original_text = await read_from_bd_origin_article(id)  # продумать логику
         print(id_article)
@@ -32,7 +32,7 @@ async def create_neiro_article(id) -> Tuple[str, str, str]:
         list_neiro = [title_ai, text_ai, prompt_for_image, image_text]
         await write_article_to_bd(list_neiro, id_article, original=False)
 
-    return image_text, id_article, prompt_for_image
+    return image_text, id_article, prompt_for_image, text_ai
 
 #перенесено в хэндлер parse_handler
 # async def create_neiro_image(image_text: str, id_article: str, prompt_for_image: str):
