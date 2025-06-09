@@ -1,5 +1,7 @@
 from g4f.client import Client
 
+from ai.chrom_kill import kill_chrom
+
 
 def get_context_from_ai(text: str, title: bool = False, image_text: bool = False, prompt: bool = False) -> str:
     """Генерирует заголовок, текст статьи и описание для картинки"""
@@ -15,7 +17,8 @@ def get_context_from_ai(text: str, title: bool = False, image_text: bool = False
                     f"без вариантов выбора. - {text}")
     elif prompt:
         ask_text = (f"Напиши промпт для генерации картинки. Только суть, без фамилий, без каких либо твоих "
-                    f"дополнений и лишних вопросов. максимум 480 символов. Без запрещенных описаний для Bing-"
+                    f"дополнений и лишних вопросов. максимум 480 символов. Если тема запрещенная, то опиши не "
+                    f"запрещенными словами для Bing.com -"
                     f" {text}")
     else:
         ask_text = (f"Перепиши статью другими словами всего должно быть 480 символов, убрав все упоминания nur.kz, "
@@ -35,5 +38,7 @@ def get_context_from_ai(text: str, title: bool = False, image_text: bool = False
             print(e)
             print(f"Не удалось получить данные с {model}\n Пробую со след модели в списке")
             continue
+        finally:
+            kill_chrom()
 
     return response.choices[0].message.content

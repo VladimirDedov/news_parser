@@ -11,9 +11,10 @@ import asyncio
 
 async def create_neiro_article(id) -> Tuple[str, str, str]:
     """Обработка статьи с помощь ИИ и запись в БД"""
-    # Читаем название и текст статьи с бд
+
+    # Читаем название и текст статьи с бд если существует
     tuple_of_neiro_article = await get_exists_neiro_article(id)
-    print(f"Кортеж сущействующей статьи {tuple_of_neiro_article}")
+
     if all(tuple_of_neiro_article):
         image_text, id_article, prompt_for_image,  text_ai= tuple_of_neiro_article
     else:
@@ -22,7 +23,7 @@ async def create_neiro_article(id) -> Tuple[str, str, str]:
         print(original_title)
         print(original_text)
 
-        # Полчаем Заголовок, содержание и текст для картинки с Нейронки
+        # Получаем Заголовок, содержание и текст для картинки с Нейронки
         print("Генерирую текст статьи")
         text_ai = get_context_from_ai(original_text)
         print("Генерирую заголовок статьи")
