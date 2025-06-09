@@ -1,6 +1,5 @@
 import requests
 from bs4 import BeautifulSoup
-from lxml.html.defs import list_tags
 
 
 def parse_text_from_tags_p(list_tags_p) -> str:

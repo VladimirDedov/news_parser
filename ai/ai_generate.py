@@ -1,7 +1,4 @@
 from g4f.client import Client
-import requests
-import os
-from g4f import models
 
 
 def get_context_from_ai(text: str, title: bool = False, image_text: bool = False, prompt: bool = False) -> str:
@@ -18,7 +15,7 @@ def get_context_from_ai(text: str, title: bool = False, image_text: bool = False
                     f"без вариантов выбора. - {text}")
     elif prompt:
         ask_text = (f"Напиши промпт для генерации картинки. Только суть, без фамилий, без каких либо твоих "
-                    f"дополнений и лишних вопросов. максимум 480 символов. -"
+                    f"дополнений и лишних вопросов. максимум 480 символов. Без запрещенных описаний для Bing-"
                     f" {text}")
     else:
         ask_text = (f"Перепиши статью другими словами всего должно быть 480 символов, убрав все упоминания nur.kz, "

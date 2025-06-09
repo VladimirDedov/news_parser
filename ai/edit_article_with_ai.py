@@ -23,9 +23,13 @@ async def create_neiro_article(id) -> Tuple[str, str, str]:
         print(original_text)
 
         # Полчаем Заголовок, содержание и текст для картинки с Нейронки
+        print("Генерирую текст статьи")
         text_ai = get_context_from_ai(original_text)
+        print("Генерирую заголовок статьи")
         title_ai = get_context_from_ai(original_text, title=True)
+        print("Генерирую текст на картинку")
         image_text = get_context_from_ai(original_text, title=True, image_text=True)
+        print("Генерирую промт для картинки")
         prompt_for_image = get_context_from_ai(text_ai, prompt=True)
 
         # Запись в БД обработанной статьи

@@ -1,5 +1,5 @@
 from typing import List, Optional
-from sqlalchemy import Text, String, DateTime, func
+from sqlalchemy import Text, DateTime, func
 from sqlalchemy.orm import DeclarativeBase
 from sqlalchemy.orm import Mapped
 from sqlalchemy.orm import mapped_column

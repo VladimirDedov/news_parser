@@ -1,7 +1,6 @@
 import requests
 from bs4 import BeautifulSoup
 from fake_useragent import UserAgent
-from flask import session
 
 from .parse_page import get_data_from_page_nurkz
 from Scraper_News.telegramm_bot.core.database.orm_query import write_article_to_bd

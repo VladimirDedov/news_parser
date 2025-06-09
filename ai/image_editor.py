@@ -1,5 +1,5 @@
 from PIL import Image, ImageDraw, ImageFont
-
+from config import PATH_FONT, PATH_FINAL_IMAGE
 
 def wrap_text(text, font, max_width, draw):
     """Разбивает текст на строки, которые помещаются в максимальную ширину"""
@@ -34,14 +34,14 @@ def draw_text_with_outline(draw, position, text, font, text_color="white", outli
 
 def add_text_to_image(image_path: str, text_for_image: str, id_article: str) -> str:
     """Добавляем текст на выбранную картинку и возвращаю путь картинки с текстом"""
-    image_path_with_text = f"/home/vvv/Python/scraper_news/Scraper_News/images/prepared_image/final-{id_article}.jpeg"
+    image_path_with_text = f"{PATH_FINAL_IMAGE}-{id_article}.jpeg"
 
     # Загружаем изображение
     img = Image.open(image_path)
     draw = ImageDraw.Draw(img)
 
     # Шрифт
-    font = ImageFont.truetype("/home/vvv/Python/scraper_news/Scraper_News/fonts/ubuntu-bold.ttf", size=80)
+    font = ImageFont.truetype(PATH_FONT, size=80)
 
     # Обернутый текст
     wrapped_lines = wrap_text(text_for_image, font, max_width=img.width - 40, draw=draw)

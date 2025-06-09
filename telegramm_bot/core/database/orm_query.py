@@ -1,15 +1,10 @@
 import asyncio
 from datetime import date
 from typing import Tuple
-from requests import session
+
 from sqlalchemy import select, update, insert, func
 from sqlalchemy.ext.asyncio import AsyncSession
-from sqlalchemy.orm import Bundle
 
-from aiogram import types
-from sympy.polys.polyconfig import query
-
-from BingImageCreator.src.BingImageCreator import debug
 from .engine import engine
 from .models import Image, Article
 
