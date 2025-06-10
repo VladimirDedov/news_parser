@@ -1,4 +1,5 @@
-from ai.ai_generate import get_context_from_ai
+# from ai.ai_generate import get_context_from_ai
+from ai.gemini import get_context_from_ai
 from telegramm_bot.core.database.orm_query import read_from_bd_origin_article
 from telegramm_bot.core.database.orm_query import write_article_to_bd
 from telegramm_bot.core.database.orm_query import write_image_to_bd
@@ -16,7 +17,7 @@ async def create_neiro_article(id) -> Tuple[str, str, str]:
     tuple_of_neiro_article = await get_exists_neiro_article(id)
 
     if all(tuple_of_neiro_article):
-        image_text, id_article, prompt_for_image,  text_ai= tuple_of_neiro_article
+        image_text, id_article, prompt_for_image, text_ai = tuple_of_neiro_article
     else:
         id_article, original_title, original_text = await read_from_bd_origin_article(id)  # продумать логику
         print(id_article)
@@ -39,10 +40,6 @@ async def create_neiro_article(id) -> Tuple[str, str, str]:
 
     return image_text, id_article, prompt_for_image, text_ai
 
-#перенесено в хэндлер parse_handler
-# async def create_neiro_image(image_text: str, id_article: str, prompt_for_image: str):
-#     # Генерируем картинку. промпт - сгенерирован нейронкой
-#     create_bing_image(prompt_for_image, id_article)
 
 async def add_text(image_path: str, image_text: str, id_article: str, list_image_path: str) -> str:
     """Добавляем текст на картинку, после чего записываем данные в БД. """
@@ -57,13 +54,5 @@ async def add_text(image_path: str, image_text: str, id_article: str, list_image
         dict_data_image["image_path_with_text"] = add_text_to_image(image_path, image_text, id_article)
 
     # Записываем в базу id_article, image_path, image_path_with_text, image_text
-    #list_image = [id_article, *list_image_path, image_path_with_text, image_text]
     await write_image_to_bd(dict_data_image)
     return dict_data_image["image_path_with_text"]
-
-if __name__ == '__main__':
-    asyncio.run(add_text("/home/vvv/Python/scraper_news/Scraper_News/images/bing_image/-enatshazak-v--2.jpg",
-             "Упрощение процедуры банкротства в Казахстане до конца года",
-             "-enatshazak-v-",
-             ['path1', "path2"]
-             ))

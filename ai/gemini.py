@@ -1,11 +1,12 @@
-from g4f.client import Client
-
+import google.generativeai as genai
+from config import GEMINI_API_KEY
 
 def get_context_from_ai(text: str, title: bool = False, image_text: bool = False, prompt: bool = False) -> str:
-    """Генерирует заголовок, текст статьи и описание для картинки"""
+    """Генерирует заголовок, текст статьи и описание для картинки. Переписать с использованием чата,
+    чтобы не передвать всегда статью целиком для обработки. Экономить токены"""
 
-    model_list = ["gpt-4", "gpt-4-turbo", "gpt-3.5-turbo"]
-    client = Client()
+    model_list = ["gemini-1.5-flash-latest", "gemini-2.0-flash", "gemini-1.5-flash-8b-latest", "gemini-1.5-flash-8b" ]
+    genai.configure(api_key=GEMINI_API_KEY)
 
     if title and image_text:
         ask_text = (f"Перепиши заголовок другими словами от пяти до 7 слов. Только один заголовок, без вариантов "
@@ -22,20 +23,13 @@ def get_context_from_ai(text: str, title: bool = False, image_text: bool = False
         ask_text = (f"Перепиши статью другими словами всего должно быть 480 символов, убрав все упоминания nur.kz, "
                     f"Акорды, телеграмм каналов и т.д. Статья: {text}")
 
-    for model in model_list:
+    for model_name in model_list:
         try:
-            response = client.chat.completions.create(
-                model=model,
-                messages=[{"role": "user",
-                           "content": ask_text
-                           }],
-                web_search=False
-            )
-            print("Отработал, надо бы закрыть браузер")
+            model = genai.GenerativeModel(model_name)
+            response = model.generate_content(ask_text)
+            return response.text
             break
         except Exception as e:
             print(e)
             print(f"Не удалось получить данные с {model}\n Пробую со след модели в списке")
             continue
-
-    return response.choices[0].message.content

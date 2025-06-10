@@ -10,3 +10,4 @@ BOT_TOKEN = os.getenv("TOKEN_BOT")#токен бота телеграмма
 PATH_IMAGES = os.getenv("PATH_IMAGES")#Путь до папки, куда сохраняются варианты картинок
 PATH_FONT = os.getenv("PATH_FONT")#Путь до шрифта надписи на картинку
 PATH_FINAL_IMAGE=os.getenv("PATH_FINAL_IMAGE")#Путь до сделанной картинки, готовой к публикации
+GEMINI_API_KEY=os.getenv("GEMINI_API_KEY")#Путь до ключа Gemini

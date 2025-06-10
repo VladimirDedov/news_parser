@@ -60,13 +60,13 @@ async def edit_article_with_ai(message: types.Message, state: FSMContext):
     await message.answer(f"Статья обработана в нейросети")
     await message.answer(f"Начинаю генерацию картинок - {id}")
 
-    #Проверить существует ли картинка с текстом
+    # Проверить существует ли картинка с текстом
     image_path_with_text = await read_image_path_with_text(id_article)
     print(f"image_path_with_text - {image_path_with_text}")
     if image_path_with_text:
         await message.answer(f"Картинка была сгенерирована ранее - {id}")
         await message.answer(f"Показать результат, готовый для публикации? 1 - Да, 0 - Нет")
-        await state.update_data(image_path=image_path_with_text)
+        await state.update_data(image_path=image_path_with_text[0])
         await state.set_state(state_fsm.show_result)
     else:
         # Генерация картинки
@@ -122,6 +122,7 @@ async def show_result_article(message: types.Message, state: FSMContext):
     else:
         await message.answer('Все данные очищены. Обработка статьи окончена.')
         await state.clear()
+
 
 @parse_router.message(state_fsm.is_publish)
 async def publish_article(message: types.Message, state: FSMContext, bot: Bot):
