@@ -2,15 +2,28 @@ import requests
 import asyncio
 from bs4 import BeautifulSoup
 from fake_useragent import UserAgent
-from .nurkz import NurKz
-from .tengri import Tengri
-from .informburo import Informburo
+from scraper.nurkz import NurKz
+from scraper.tengri import Tengri
+from scraper.informburo import Informburo
+from scraper.informkz import Informkz
 
 # from parse_page import get_data_from_page_nurkz
 from Scraper_News.telegramm_bot.core.database.orm_query import write_article_to_bd
 
+def get_instance_of_class(url: str):
+    if url == "https://www.nur.kz":
+        kz = NurKz()
+    elif url == "https://www.nur.kz":
+        kz = Tengri()
+    elif url == "https://informburo.kz/novosti":
+        kz = Informburo()
+    elif url == "https://www.inform.kz/lenta/":
+        kz = Informkz()
 
-async def collect_data(url: str = 'https://www.nur.kz/'):
+    return kz
+
+
+async def collect_data(url: str = 'https://www.nur.kz'):
     """Парсинг данных с сайтов"""
 
     dict_of_article: dict = {}
@@ -30,12 +43,7 @@ async def collect_data(url: str = 'https://www.nur.kz/'):
     responce.encoding = 'utf-8'
     soup = BeautifulSoup(responce.text, "lxml")
 
-    if url == "https://www.nur.kz/":
-        kz = NurKz()
-    elif url == "https://www.nur.kz/":
-        kz = Tengri()
-    elif url == "https://informburo.kz/novosti":
-        kz = Informburo()
+    kz = get_instance_of_class(url)
 
     # Получить словарь с ссылками статей и заголовками
     dict_of_article = kz.get_list_of_article(soup)
@@ -56,7 +64,7 @@ async def collect_data(url: str = 'https://www.nur.kz/'):
 
 
 def main():
-    asyncio.run(collect_data("https://informburo.kz/novosti"))
+    asyncio.run(collect_data("https://www.inform.kz/lenta/"))
 
 
 if __name__ == "__main__":

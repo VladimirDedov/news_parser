@@ -25,7 +25,7 @@ class Informburo(Article):
             href = tag_a['href']
             dict_of_article[href] = text_article.strip()
 
-            if count > 7:
+            if count > 6:
                 break
             count += 1
         return dict_of_article

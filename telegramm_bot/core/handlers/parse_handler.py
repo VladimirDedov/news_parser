@@ -36,10 +36,18 @@ async def start_parse_nurkz(message: types.Message):
     id_article_list = await collect_data("https://tengrinews.kz/")
     await message.answer("Парсинг статей с сайта Tengri окончен. Посмотреть статьи за сегодня /view")
 
-@parse_router.message(Command("inform"))
+
+@parse_router.message(Command("informburo"))
 async def start_parse_nurkz(message: types.Message):
     await message.answer("Парсинг статей с сайта Ифнормбюро запущен")
     id_article_list = await collect_data("https://informburo.kz/novosti")
+    await message.answer("Парсинг статей с сайта Ифнормбюро окончен. Посмотреть статьи за сегодня /view")
+
+
+@parse_router.message(Command("inform"))
+async def start_parse_nurkz(message: types.Message):
+    await message.answer("Парсинг статей с сайта Ифнормбюро запущен")
+    id_article_list = await collect_data("https://www.inform.kz/lenta/")
     await message.answer("Парсинг статей с сайта Ифнормбюро окончен. Посмотреть статьи за сегодня /view")
 
 
