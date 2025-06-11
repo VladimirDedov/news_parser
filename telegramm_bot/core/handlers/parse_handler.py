@@ -25,10 +25,22 @@ async def start_cmd(message: types.Message, bot: Bot):
 
 @parse_router.message(Command("nurkz"))
 async def start_parse_nurkz(message: types.Message):
-    count = 0
     await message.answer("Парсинг статей с сайта NURKZ запущен")
     id_article_list = await collect_data("https://www.nur.kz/")
     await message.answer("Парсинг статей с сайта NURKZ окончен. Посмотреть статьи за сегодня /view")
+
+
+@parse_router.message(Command("tengri"))
+async def start_parse_nurkz(message: types.Message):
+    await message.answer("Парсинг статей с сайта Tengri запущен")
+    id_article_list = await collect_data("https://tengrinews.kz/")
+    await message.answer("Парсинг статей с сайта Tengri окончен. Посмотреть статьи за сегодня /view")
+
+@parse_router.message(Command("inform"))
+async def start_parse_nurkz(message: types.Message):
+    await message.answer("Парсинг статей с сайта Ифнормбюро запущен")
+    id_article_list = await collect_data("https://informburo.kz/novosti")
+    await message.answer("Парсинг статей с сайта Ифнормбюро окончен. Посмотреть статьи за сегодня /view")
 
 
 @parse_router.message(Command("view"))
