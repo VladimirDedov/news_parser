@@ -11,9 +11,9 @@ from scraper.informkz import Informkz
 from Scraper_News.telegramm_bot.core.database.orm_query import write_article_to_bd
 
 def get_instance_of_class(url: str):
-    if url == "https://www.nur.kz":
+    if url == "https://www.nur.kz/":
         kz = NurKz()
-    elif url == "https://www.nur.kz":
+    elif url == "https://tengrinews.kz/":
         kz = Tengri()
     elif url == "https://informburo.kz/novosti":
         kz = Informburo()

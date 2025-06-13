@@ -46,9 +46,9 @@ async def start_parse_nurkz(message: types.Message):
 
 @parse_router.message(Command("inform"))
 async def start_parse_nurkz(message: types.Message):
-    await message.answer("Парсинг статей с сайта Ифнормбюро запущен")
+    await message.answer("Парсинг статей с сайта ИфнормКЗ запущен")
     id_article_list = await collect_data("https://www.inform.kz/lenta/")
-    await message.answer("Парсинг статей с сайта Ифнормбюро окончен. Посмотреть статьи за сегодня /view")
+    await message.answer("Парсинг статей с сайта ИфнормКЗ окончен. Посмотреть статьи за сегодня /view")
 
 
 @parse_router.message(Command("view"))
@@ -92,7 +92,9 @@ async def edit_article_with_ai(message: types.Message, state: FSMContext):
         # Генерация картинки
         list_image_path = create_bing_image(prompt_for_image, id_article)
         if list_image_path is None:
-            await message.answer(f"картинки не сгенерированы. /edit - начать заново")
+            await message.answer(f"картинки не сгенерированы. ")
+            await message.answer(f"Скорее всего запрос заблокирован Bing /edit - начать заново")
+            return
         await message.answer(f"картинки сгенерированы. ")
 
         # отправляем картинки на выбор для обработки

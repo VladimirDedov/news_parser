@@ -1,9 +1,9 @@
-
 import requests
 
 from scraper.main_article_class import Article
 from bs4 import BeautifulSoup
 from typing import List, Dict
+
 
 class Informburo(Article):
     def __init__(self):
@@ -36,7 +36,9 @@ class Informburo(Article):
 
         text: str = ''''''
         for p in list_tags_p:
-            text += p.find(text=True)
+            # st = p.find(text=True)
+            if st := p.find(text=True):
+                text += st
 
         return text
 
