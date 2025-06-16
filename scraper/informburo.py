@@ -54,6 +54,7 @@ class Informburo(Article):
 
         soup = BeautifulSoup(responce.text, "lxml")
         tag_div = soup.find("div", class_="uk-width-2-3@m uk-width-1-1")
+
         list_tags_p = tag_div.find_all('p')
 
         list_of_data_from_article.append(Informburo.__parse_text_from_tags_p(list_tags_p))
