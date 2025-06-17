@@ -36,7 +36,6 @@ class Informburo(Article):
 
         text: str = ''''''
         for p in list_tags_p:
-            # st = p.find(text=True)
             if st := p.find(text=True):
                 text += st
 

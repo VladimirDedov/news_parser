@@ -1,4 +1,3 @@
-import os
 from aiogram import Router
 from aiogram import types
 from aiogram import Bot
@@ -14,9 +13,10 @@ from ..fsm.fsm import Add_Neiro_Article as state_fsm
 from ai.edit_article_with_ai import create_neiro_article
 from ai.edit_article_with_ai import add_text
 from Scraper_News.BingImageCreator.src.bing_main import create_bing_image
+from config import CHAT_ID
 
 parse_router = Router()
-
+chat_id = CHAT_ID
 
 @parse_router.message(CommandStart())
 async def start_cmd(message: types.Message, bot: Bot):
@@ -155,6 +155,6 @@ async def publish_article(message: types.Message, state: FSMContext, bot: Bot):
         photo = data.get("photo")
         caption = data.get("caption")
         id_article = data.get("id_article")
-        await bot.send_photo(chat_id="@kazah_news_today", photo=photo, caption=caption)
+        await bot.send_photo(chat_id=chat_id, photo=photo, caption=caption)
         await write_is_publised_article(id_article)
     await state.clear()
