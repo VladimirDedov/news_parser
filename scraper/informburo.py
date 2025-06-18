@@ -3,7 +3,9 @@ import requests
 from scraper.main_article_class import Article
 from bs4 import BeautifulSoup
 from typing import List, Dict
+from logs.config_logger import get_logger
 
+logger = get_logger(__name__)
 
 class Informburo(Article):
     def __init__(self):
@@ -43,6 +45,9 @@ class Informburo(Article):
 
     def get_data_from_page(self, href: str, article_title: str, headers: Dict[str, str]) -> List[str]:
         """Получение данных с одной статьи для записи в БД"""
+
+        logger.info(f"Начинаю обработку статьи{article_title}")
+
         list_of_data_from_article = []
         url = href
         id_article = href[-1:-15:-1].replace('/', '-')
@@ -57,5 +62,5 @@ class Informburo(Article):
         list_tags_p = tag_div.find_all('p')
 
         list_of_data_from_article.append(Informburo.__parse_text_from_tags_p(list_tags_p))
-
+        logger.info(f"Статья - {article_title} обработана")
         return list_of_data_from_article

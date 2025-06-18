@@ -1,14 +1,17 @@
 import requests
 import asyncio
+
 from bs4 import BeautifulSoup
 from fake_useragent import UserAgent
 from scraper.nurkz import NurKz
 from scraper.tengri import Tengri
 from scraper.informburo import Informburo
 from scraper.informkz import Informkz
-
+from logs.config_logger import get_logger
 # from parse_page import get_data_from_page_nurkz
-from Scraper_News.telegramm_bot.core.database.orm_query import write_article_to_bd
+from telegramm_bot.core.database.orm_query import write_article_to_bd
+
+logger = get_logger(__name__)
 
 def get_instance_of_class(url: str):
     if url == "https://www.nur.kz/":
@@ -19,12 +22,14 @@ def get_instance_of_class(url: str):
         kz = Informburo()
     elif url == "https://www.inform.kz/lenta/":
         kz = Informkz()
-
+    logger.info(f"Создан экземпляр класса {kz.__class__.__name__}")
     return kz
 
 
 async def collect_data(url: str = 'https://www.nur.kz'):
     """Парсинг данных с сайтов"""
+
+    logger.info(f"Начинаю парсинг сайта {url}")
 
     dict_of_article: dict = {}
     href: str
@@ -47,7 +52,7 @@ async def collect_data(url: str = 'https://www.nur.kz'):
 
     # Получить словарь с ссылками статей и заголовками
     dict_of_article = kz.get_list_of_article(soup)
-    print(f"dict_of_article - {dict_of_article}")
+    logger.info(f"Получен словарь с ссылками статей и заголовками")
 
     # Получить данные одной статьи - id, url, title, text для записи их в БД
     for href, article_title in dict_of_article.items():

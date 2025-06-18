@@ -14,9 +14,13 @@ from ai.edit_article_with_ai import create_neiro_article
 from ai.edit_article_with_ai import add_text
 from Scraper_News.BingImageCreator.src.bing_main import create_bing_image
 from config import CHAT_ID
+from logs.config_logger import get_logger
 
+logger = get_logger(__name__)
+logger.info("Начинаю запуск бота")
 parse_router = Router()
 chat_id = CHAT_ID
+
 
 @parse_router.message(CommandStart())
 async def start_cmd(message: types.Message, bot: Bot):

@@ -4,6 +4,9 @@ import requests
 from scraper.main_article_class import Article
 from bs4 import BeautifulSoup
 from typing import List, Dict
+from logs.config_logger import get_logger
+
+logger = get_logger(__name__)
 
 class Informkz(Article):
     def __init__(self):
@@ -18,11 +21,10 @@ class Informkz(Article):
 
         article_html_list = soup.find_all("div", class_="allNewsCard")
 
-
         for item in article_html_list:  # получаем список статей со сслыками на них
             tag_a = item.find("a")
             tag_div_in_a = tag_a.find("div", class_="allNewsCard_title")
-            text_article=tag_div_in_a.text
+            text_article = tag_div_in_a.text
             href = tag_a['href']
             dict_of_article[href] = text_article.strip()
 
@@ -37,7 +39,7 @@ class Informkz(Article):
 
         text: str = ''''''
         for p in list_tags_p:
-            #text += p.find(text=True)
+            # text += p.find(text=True)
             if st := p.find(text=True):
                 text += st
 
@@ -45,8 +47,10 @@ class Informkz(Article):
 
     def get_data_from_page(self, href: str, article_title: str, headers: Dict[str, str]) -> List[str]:
         """Получение данных с одной статьи для записи в БД"""
+
+        logger.info(f"Начинаю обработку статьи{article_title}")
         list_of_data_from_article = []
-        url = self.__url+href
+        url = self.__url + href
         id_article = href[-1:-15:-1].replace('/', '-')
         list_of_data_from_article = [id_article, url, article_title]
 
@@ -61,5 +65,5 @@ class Informkz(Article):
         list_tags_p = tag_div.find_all('p')
 
         list_of_data_from_article.append(text_discription + Informkz.__parse_text_from_tags_p(list_tags_p))
-
+        logger.info(f"Статья - {article_title} обработана")
         return list_of_data_from_article
