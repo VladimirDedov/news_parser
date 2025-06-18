@@ -1,5 +1,4 @@
 import requests
-import asyncio
 
 from bs4 import BeautifulSoup
 from fake_useragent import UserAgent
@@ -12,6 +11,7 @@ from logs.config_logger import get_logger
 from telegramm_bot.core.database.orm_query import write_article_to_bd
 
 logger = get_logger(__name__)
+
 
 def get_instance_of_class(url: str):
     if url == "https://www.nur.kz/":
@@ -64,13 +64,10 @@ async def collect_data(url: str = 'https://www.nur.kz'):
         # Список айди добавленных статей
         id_article_list.append(list_of_data[1])
         list_of_data.clear()
+    logger.info(f"Парсинг статей с сайта {url} окончен ")
 
     return id_article_list
 
 
-def main():
-    asyncio.run(collect_data("https://www.inform.kz/lenta/"))
-
-
 if __name__ == "__main__":
-    main()
+    collect_data("https://www.inform.kz/lenta/")

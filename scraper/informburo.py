@@ -46,7 +46,7 @@ class Informburo(Article):
     def get_data_from_page(self, href: str, article_title: str, headers: Dict[str, str]) -> List[str]:
         """Получение данных с одной статьи для записи в БД"""
 
-        logger.info(f"Начинаю обработку статьи{article_title}")
+        logger.info(f"Начинаю обработку статьи - {article_title}")
 
         list_of_data_from_article = []
         url = href

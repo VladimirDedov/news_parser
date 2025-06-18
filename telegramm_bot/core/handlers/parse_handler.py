@@ -74,6 +74,7 @@ async def get_today_articles(message: types.Message, state: FSMContext):
 async def edit_article_with_ai(message: types.Message, state: FSMContext):
     id = message.text
     await message.answer(f"Выбрана статья номер - {id}!")
+    logger.info(f"Начинаю обработку статьи в нейросети с id - {id}")
     await message.answer(f"Начинаю обработку статьи - {id}")
 
     # Обработка статьи нейросетью
@@ -82,14 +83,16 @@ async def edit_article_with_ai(message: types.Message, state: FSMContext):
     await state.update_data(id_article=id_article)
     await state.update_data(article_neiro_text=article_neiro_text)
     await message.answer(f"Статья обработана в нейросети")
+    logger.info(f"Статья {id} обработана в нейросети")
     await message.answer(f"Начинаю генерацию картинок - {id}")
-
+    logger.info(f"Начата генерация картинок для статьи {id}")
     # Проверить существует ли картинка с текстом
     image_path_with_text = await read_image_path_with_text(id_article)
     print(f"image_path_with_text - {image_path_with_text}")
     if image_path_with_text:
         await message.answer(f"Картинка была сгенерирована ранее - {id}")
         await message.answer(f"Показать результат, готовый для публикации? 1 - Да, 0 - Нет")
+        logger.info(f"Картинка для статьи {id} была сгенерирована ранее")
         await state.update_data(image_path=image_path_with_text[0])
         await state.set_state(state_fsm.show_result)
     else:
@@ -117,6 +120,7 @@ async def edit_article_with_ai(message: types.Message, state: FSMContext):
 @parse_router.message(state_fsm.id_image)
 async def process_add_text_to_image(message: types.Message, state: FSMContext, bot: Bot):
     id_image = int(message.text)
+    logger.info(f"Выбрана картинка для добавления текста {id_image}")
     data = await state.get_data()
     image_path = data.get("list_image_path")[id_image]
     image_text = data.get("image_text")
@@ -124,9 +128,11 @@ async def process_add_text_to_image(message: types.Message, state: FSMContext, b
 
     list_image_path = data.get("list_image_path")
     await message.answer(f"Добавляю текст на картинку - {image_text}")
+
     image_path = await add_text(image_path, image_text, id_article, list_image_path)
     await message.answer(f"Текст добавлен.")
     await message.answer(f"Показать результат, готовый для публикации? 1 - Да, 0 - Нет")
+    logger.info(f"Текст на картинку {id_image} добавлен")
     await state.update_data(image_path=image_path)
     await state.update_data(id_article=id_article)
     await state.set_state((state_fsm.show_result))
@@ -143,6 +149,7 @@ async def show_result_article(message: types.Message, state: FSMContext):
         await message.answer_photo(photo=photo, caption=article_neiro_text)
         await state.update_data(photo=photo)
         await state.update_data(caption=article_neiro_text)
+        logger.info(f"Показана готовая статья в телеграмм боте")
         await message.answer('Опубликовать статью? 1 - Да, 0 - Нет')
         await state.set_state(state_fsm.is_publish)
     else:
@@ -161,4 +168,5 @@ async def publish_article(message: types.Message, state: FSMContext, bot: Bot):
         id_article = data.get("id_article")
         await bot.send_photo(chat_id=chat_id, photo=photo, caption=caption)
         await write_is_publised_article(id_article)
+        logger.info(f"Статья опубликована в канале")
     await state.clear()
