@@ -4,6 +4,7 @@ from aiogram import Bot
 from aiogram.filters import CommandStart, Command
 from aiogram.fsm.context import FSMContext
 from aiogram.types import FSInputFile
+from aiogram.enums import ParseMode
 
 from scraper.collect_data import collect_data
 from ..database.orm_query import read_all_today_article
@@ -146,7 +147,7 @@ async def show_result_article(message: types.Message, state: FSMContext):
         article_neiro_text = data.get("article_neiro_text")
         image_path = data.get("image_path")
         photo = FSInputFile(image_path)
-        await message.answer_photo(photo=photo, caption=article_neiro_text)
+        await message.answer_photo(photo=photo, caption=article_neiro_text, parse_mode=ParseMode.HTML)
         await state.update_data(photo=photo)
         await state.update_data(caption=article_neiro_text)
         logger.info(f"Показана готовая статья в телеграмм боте")
