@@ -60,7 +60,7 @@ async def collect_data(url: str = 'https://www.nur.kz'):
 
         # Запись в базу данных
         await write_article_to_bd(list_of_data=list_of_data)
-        print(f"list_of_data - {list_of_data}")
+
         # Список айди добавленных статей
         id_article_list.append(list_of_data[1])
         list_of_data.clear()

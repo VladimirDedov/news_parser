@@ -33,7 +33,6 @@ def get_context_from_ai(text: str, title: bool = False, image_text: bool = False
             model = genai.GenerativeModel(model_name)
             response = model.generate_content(ask_text)
             return response.text
-            break
         except Exception as e:
             print(e)
             print(f"Не удалось получить данные с {model}\n Пробую со след модели в списке")
