@@ -8,6 +8,7 @@ from logs.config_logger import get_logger
 logger = get_logger(__name__)
 
 from telegramm_bot.core.handlers.parse_handler import parse_router
+from telegramm_bot.core.handlers.callback_handler import callback_router
 
 from config import BOT_TOKEN
 
@@ -18,6 +19,7 @@ bot = Bot(token=BOT_TOKEN)
 
 dp = Dispatcher()
 dp.include_router(parse_router)
+dp.include_router(callback_router)
 
 
 async def run_telegram_bot():

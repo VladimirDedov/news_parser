@@ -1,4 +1,4 @@
-from aiogram import Router
+from aiogram import Router, F
 from aiogram import types
 from aiogram import Bot
 from aiogram.filters import CommandStart, Command
@@ -13,19 +13,21 @@ from ..database.orm_query import write_is_publised_article
 from ..fsm.fsm import Add_Neiro_Article as state_fsm
 from ai.edit_article_with_ai import create_neiro_article
 from ai.edit_article_with_ai import add_text
+from ..keyboards.inline import get_inline_kbd, get_start_inline_kbd
 from Scraper_News.BingImageCreator.src.bing_main import create_bing_image
 from config import CHAT_ID
 from logs.config_logger import get_logger
 
 logger = get_logger(__name__)
 logger.info("Начинаю запуск бота")
+
 parse_router = Router()
 chat_id = CHAT_ID
 
 
 @parse_router.message(CommandStart())
 async def start_cmd(message: types.Message, bot: Bot):
-    await message.answer("Создатель, приветствую тебя!")
+    await message.answer("Создатель, приветствую тебя!", reply_markup=get_start_inline_kbd())
 
 
 @parse_router.message(Command("nurkz"))
@@ -49,11 +51,13 @@ async def start_parse_nurkz(message: types.Message):
     await message.answer("Парсинг статей с сайта Ифнормбюро окончен. Посмотреть статьи за сегодня /view")
 
 
+
 @parse_router.message(Command("inform"))
 async def start_parse_nurkz(message: types.Message):
     await message.answer("Парсинг статей с сайта ИфнормКЗ запущен")
     id_article_list = await collect_data("https://www.inform.kz/lenta/")
     await message.answer("Парсинг статей с сайта ИфнормКЗ окончен. Посмотреть статьи за сегодня /view")
+
 
 
 @parse_router.message(Command("view"))
