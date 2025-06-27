@@ -1,7 +1,7 @@
 from aiogram.types import InlineKeyboardMarkup, InlineKeyboardButton
 from aiogram.utils.keyboard import InlineKeyboardBuilder
 
-from telegramm_bot.core.factory.call_factory import ArticleCallbackFactory
+from telegramm_bot.core.factory.call_factory import ArticleCallbackFactory, ImageCallbackFactory
 
 
 def get_inline_kbd(article_id: str) -> InlineKeyboardMarkup:
@@ -47,14 +47,34 @@ def get_view_kbd() -> InlineKeyboardMarkup:
 
 
 def get_title_btn(
-        *,
-        article_id: str,
+        article_id: int,
         sizes: tuple = (1,),
 ):
     inline_keyboard = InlineKeyboardBuilder()
 
     inline_keyboard.add(InlineKeyboardButton(text="👌 Обработать в ИИ",
                                              callback_data=ArticleCallbackFactory(action="view", id=article_id).pack()
+                                             ))
+
+    return inline_keyboard.adjust(*sizes).as_markup()
+
+def get_image_kb(index: int,
+                 sizes: tuple = (1,),) -> InlineKeyboardMarkup:
+    image_kbd = InlineKeyboardBuilder()
+
+    image_kbd.add(InlineKeyboardButton(text="✏ Добавить текст",
+                                             callback_data=ImageCallbackFactory(action="write", id=index).pack()
+                                             ))
+
+    return image_kbd.adjust(*sizes).as_markup()
+
+def get_common_kbd(btns: dict,
+                   sizes: tuple = (1,)):
+
+    inline_keyboard = InlineKeyboardBuilder()
+    for key, item in btns.items():
+        inline_keyboard.add(InlineKeyboardButton(text=f"👌 {key}",
+                                             callback_data=item
                                              ))
 
     return inline_keyboard.adjust(*sizes).as_markup()

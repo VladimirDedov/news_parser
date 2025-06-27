@@ -14,7 +14,7 @@ from ..fsm.fsm import Add_Neiro_Article as state_fsm
 from ai.edit_article_with_ai import create_neiro_article
 from ai.edit_article_with_ai import add_text
 from ..keyboards.inline import get_inline_kbd, get_start_inline_kbd
-from Scraper_News.BingImageCreator.src.bing_main import create_bing_image
+from BingImageCreator.src.bing_main import create_bing_image
 from config import CHAT_ID
 from logs.config_logger import get_logger
 
@@ -123,7 +123,7 @@ async def edit_article_with_ai(message: types.Message, state: FSMContext):
 
 
 @parse_router.message(state_fsm.id_image)
-async def process_add_text_to_image(message: types.Message, state: FSMContext, bot: Bot):
+async def process_add_text_to_image(message: types.Message, state: FSMContext):
     id_image = int(message.text)
     logger.info(f"Выбрана картинка для добавления текста {id_image}")
     data = await state.get_data()
