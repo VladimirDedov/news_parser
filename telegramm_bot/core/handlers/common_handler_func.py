@@ -4,14 +4,12 @@ from aiogram.fsm.context import FSMContext
 from aiogram.types import FSInputFile
 
 from config import CHAT_ID
-from scraper.collect_data import collect_data
-from ..database.orm_query import read_all_today_article
 from ..database.orm_query import read_image_path_with_text
 from ..database.orm_query import write_is_publised_article
 from ..fsm.fsm import Add_Neiro_Article as state_fsm
 from ai.edit_article_with_ai import create_neiro_article
 from ai.edit_article_with_ai import add_text
-from ..keyboards.inline import get_inline_kbd, get_start_inline_kbd, get_image_kb, get_common_kbd
+from ..keyboards.inline import get_image_kb, get_common_kbd
 from BingImageCreator.src.bing_main import create_bing_image
 
 from logs.config_logger import get_logger
@@ -71,9 +69,10 @@ async def edit_article_with_ai_func(message: types.Message, state: FSMContext, i
 
 
 async def process_add_text_to_image_func(message: types.Message, state: FSMContext, id_imag = None):
-    if not id_imag:#Проблема когда выбираешь картинку с нулевым индексом. Переработать!
+    """Добавление текста на картинку, если она сгенерирована Мелкомягкими"""
+    if id_imag is not None:#Проблема когда выбираешь картинку с нулевым индексом. Переработать!
         print(f"id_image {type(id_imag)} - {id_imag}")
-        id_imag = int(message.text)
+        #id_imag = int(message.text)
 
     logger.info(f"Выбрана картинка для добавления текста {id_imag}")
     data = await state.get_data()
@@ -95,6 +94,7 @@ async def process_add_text_to_image_func(message: types.Message, state: FSMConte
 
 
 async def show_result_article_func(message: types.Message, state: FSMContext, show_result: bool = False):
+    """Показать рещультат в телеграмм боте"""
     if not show_result:
         show_result = int(message.text)
 
@@ -118,7 +118,6 @@ async def show_result_article_func(message: types.Message, state: FSMContext, sh
 
 async def publish_article_func(message: types.Message, state: FSMContext, bot: Bot, is_publish: bool = False):
     """Публикация статьи в Телграмм канал"""
-    print(is_publish)
     if not is_publish:
         is_published = message.text
 
@@ -131,3 +130,4 @@ async def publish_article_func(message: types.Message, state: FSMContext, bot: B
         await write_is_publised_article(id_article)
         logger.info(f"Статья опубликована в канале")
     await state.clear()
+

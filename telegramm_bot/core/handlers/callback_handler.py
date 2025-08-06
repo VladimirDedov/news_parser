@@ -7,7 +7,7 @@ from scraper.collect_data import collect_data
 from .common_handler_func import edit_article_with_ai_func, process_add_text_to_image_func, show_result_article_func, \
     publish_article_func
 from ..database.orm_query import read_all_today_article
-from ..keyboards.inline import get_view_kbd, get_title_btn
+from ..keyboards.inline import get_view_kbd, get_title_btn, get_start_inline_kbd
 from ..factory.call_factory import ArticleCallbackFactory, ImageCallbackFactory
 
 callback_router = Router()
@@ -77,10 +77,14 @@ async def show_result_article_call(callback: types.CallbackQuery, state: FSMCont
 async def publish_article_call(callback: types.CallbackQuery, state: FSMContext, bot: Bot):
     await publish_article_func(callback.message, state, bot, True)
     await callback.message.answer('Статья опубликована в канале')
+    await callback.message.answer("Создатель, приветствую тебя!", reply_markup=get_start_inline_kbd())
     await state.clear()
+
 
 
 @callback_router.callback_query(F.data == "cansel")
 async def cansel_call(callback: types.CallbackQuery, state: FSMContext):
     await callback.message.answer('Все данные очищены. Обработка статьи окончена.')
+    await callback.message.answer("Создатель, приветствую тебя!", reply_markup=get_start_inline_kbd())
     await state.clear()
+

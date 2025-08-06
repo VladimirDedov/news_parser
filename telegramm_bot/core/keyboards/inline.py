@@ -58,23 +58,28 @@ def get_title_btn(
 
     return inline_keyboard.adjust(*sizes).as_markup()
 
+
 def get_image_kb(index: int,
-                 sizes: tuple = (1,),) -> InlineKeyboardMarkup:
+                 sizes: tuple = (1,), ) -> InlineKeyboardMarkup:
     image_kbd = InlineKeyboardBuilder()
 
     image_kbd.add(InlineKeyboardButton(text="✏ Добавить текст",
-                                             callback_data=ImageCallbackFactory(action="write", id=index).pack()
-                                             ))
+                                       callback_data=ImageCallbackFactory(action="write", id=index).pack()
+                                       ))
 
     return image_kbd.adjust(*sizes).as_markup()
 
+
 def get_common_kbd(btns: dict,
                    sizes: tuple = (1,)):
-
     inline_keyboard = InlineKeyboardBuilder()
+    smile = "👌"
     for key, item in btns.items():
-        inline_keyboard.add(InlineKeyboardButton(text=f"👌 {key}",
-                                             callback_data=item
-                                             ))
+        if item == "cansel":
+            smile = "❌"
+
+        inline_keyboard.add(InlineKeyboardButton(text=f"{smile} {key}",
+                                                 callback_data=item
+                                                 ))
 
     return inline_keyboard.adjust(*sizes).as_markup()

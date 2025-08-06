@@ -1,4 +1,3 @@
-# from ai.ai_generate import get_context_from_ai
 from ai.gemini import get_context_from_ai
 from telegramm_bot.core.database.orm_query import read_from_bd_origin_article
 from telegramm_bot.core.database.orm_query import write_article_to_bd
@@ -6,8 +5,6 @@ from telegramm_bot.core.database.orm_query import write_image_to_bd
 from telegramm_bot.core.database.orm_query import get_exists_neiro_article
 from .image_editor import add_text_to_image
 from typing import Tuple
-
-import asyncio
 
 
 async def create_neiro_article(id) -> Tuple[str, str, str]:
@@ -22,7 +19,6 @@ async def create_neiro_article(id) -> Tuple[str, str, str]:
         id_article, original_title, original_text = await read_from_bd_origin_article(id)  # продумать логику
         print(id_article)
         print(original_title)
-        print(original_text)
 
         # Получаем Заголовок, содержание и текст для картинки с Нейронки
         print("Генерирую текст статьи")
