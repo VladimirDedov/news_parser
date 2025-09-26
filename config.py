@@ -13,3 +13,6 @@ PATH_FINAL_IMAGE=os.getenv("PATH_FINAL_IMAGE")#Путь до сделанной 
 GEMINI_API_KEY=os.getenv("GEMINI_API_KEY")#Путь до ключа Gemini
 CHAT_ID=os.getenv("CHAT_ID")#Имя телеграмм канала
 PATH_LOG = os.getenv("PATH_LOG")
+INST_LOGIN = os.getenv("INST_LOGIN")#Логин инсты Kazahstan_news
+TEST_LOGIN = os.getenv("TEST_LOGIN")#Тестовый логин от vl_tik_tok
+INST_PASS = os.getenv("INST_PASS")

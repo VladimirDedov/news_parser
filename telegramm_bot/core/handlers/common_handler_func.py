@@ -11,8 +11,10 @@ from ai.edit_article_with_ai import create_neiro_article
 from ai.edit_article_with_ai import add_text
 from ..keyboards.inline import get_image_kb, get_common_kbd
 from BingImageCreator.src.bing_main import create_bing_image
+from instagram.upload_news import run_upload_instagram
 
 from logs.config_logger import get_logger
+
 chat_id = CHAT_ID
 
 logger = get_logger(__name__)
@@ -68,11 +70,11 @@ async def edit_article_with_ai_func(message: types.Message, state: FSMContext, i
         await state.set_state(state_fsm.id_image)
 
 
-async def process_add_text_to_image_func(message: types.Message, state: FSMContext, id_imag = None):
+async def process_add_text_to_image_func(message: types.Message, state: FSMContext, id_imag=None):
     """Добавление текста на картинку, если она сгенерирована Мелкомягкими"""
-    if id_imag is not None:#Проблема когда выбираешь картинку с нулевым индексом. Переработать!
+    if id_imag is not None:  # Проблема когда выбираешь картинку с нулевым индексом. Переработать!
         print(f"id_image {type(id_imag)} - {id_imag}")
-        #id_imag = int(message.text)
+        # id_imag = int(message.text)
 
     logger.info(f"Выбрана картинка для добавления текста {id_imag}")
     data = await state.get_data()
@@ -105,6 +107,7 @@ async def show_result_article_func(message: types.Message, state: FSMContext, sh
         photo = FSInputFile(image_path)
         await message.answer_photo(photo=photo, caption=article_neiro_text, parse_mode=ParseMode.HTML,
                                    reply_markup=get_common_kbd({"Опубликовать в канале?": "is_publish",
+                                                                "Опубликовать в Инсте?": "is_publish_inst",
                                                                 "Cansel": "cansel"},
                                                                sizes=(2,)))
         await state.update_data(photo=photo)
@@ -131,3 +134,16 @@ async def publish_article_func(message: types.Message, state: FSMContext, bot: B
         logger.info(f"Статья опубликована в канале")
     await state.clear()
 
+async def publish_article_inst_func(message: types.Message, state: FSMContext, bot: Bot, is_publish: bool = False):
+    """Публикация статьи в Телграмм канал"""
+    if not is_publish:
+        is_published = message.text
+
+    if is_publish:
+        data = await state.get_data()
+        image_path = data.get("image_path")
+        caption = data.get("caption")
+        id_article = data.get("id_article")
+        run_upload_instagram(photo_path=image_path, caption=caption, is_photo=True)
+        logger.info(f"Статья опубликована в Инстаграмме")
+    await state.clear()

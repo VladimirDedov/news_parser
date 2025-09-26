@@ -4,8 +4,12 @@ from aiogram import F
 from aiogram.fsm.context import FSMContext
 
 from scraper.collect_data import collect_data
-from .common_handler_func import edit_article_with_ai_func, process_add_text_to_image_func, show_result_article_func, \
-    publish_article_func
+from .common_handler_func import edit_article_with_ai_func
+from .common_handler_func import show_result_article_func
+from .common_handler_func import publish_article_inst_func
+from .common_handler_func import process_add_text_to_image_func
+from .common_handler_func import publish_article_func
+
 from ..database.orm_query import read_all_today_article
 from ..keyboards.inline import get_view_kbd, get_title_btn, get_start_inline_kbd
 from ..factory.call_factory import ArticleCallbackFactory, ImageCallbackFactory
@@ -81,10 +85,18 @@ async def publish_article_call(callback: types.CallbackQuery, state: FSMContext,
     await state.clear()
 
 
+@callback_router.callback_query(F.data == "is_publish_inst")
+async def publish_article_inst_call(callback: types.CallbackQuery, state: FSMContext, bot: Bot):
+    await publish_article_func(callback.message, state, bot, True)  # Опубликовать в канале телеги
+    await callback.message.answer('Статья опубликована в канале Телеграмма')
+    await publish_article_inst_func(callback.message, state, bot, True)  # Опубликовать в Инсте
+    await callback.message.answer('Статья опубликована в Инстаграмм')
+    await callback.message.answer("Создатель, приветствую тебя!", reply_markup=get_start_inline_kbd())
+    await state.clear()
+
 
 @callback_router.callback_query(F.data == "cansel")
 async def cansel_call(callback: types.CallbackQuery, state: FSMContext):
     await callback.message.answer('Все данные очищены. Обработка статьи окончена.')
     await callback.message.answer("Создатель, приветствую тебя!", reply_markup=get_start_inline_kbd())
     await state.clear()
-

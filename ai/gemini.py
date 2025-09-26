@@ -23,7 +23,7 @@ def get_context_from_ai(text: str, title: bool = False, image_text: bool = False
     """Генерирует заголовок, текст статьи и описание для картинки. Переписать с использованием чата,
     чтобы не передвать всегда статью целиком для обработки. Экономить токены"""
 
-    model_list = ["gemini-1.5-flash-latest", "gemini-2.0-flash", "gemini-1.5-flash-8b-latest", "gemini-1.5-flash-8b" ]
+    model_list = ["gemini-2.5-flash", "gemini-2.0-flash", "gemini-1.5-flash-8b-latest", "gemini-1.5-flash-8b" ]
     genai.configure(api_key=GEMINI_API_KEY)
 
     ask_text = get_ask_text(title, image_text, prompt) + text
