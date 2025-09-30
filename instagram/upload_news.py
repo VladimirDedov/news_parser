@@ -6,7 +6,6 @@ from config import INST_PASS, INST_LOGIN
 SESSION_FILE = "session.json"
 USERNAME = INST_LOGIN
 PASSWORD = INST_PASS
-print(USERNAME, PASSWORD)
 
 
 def get_client():

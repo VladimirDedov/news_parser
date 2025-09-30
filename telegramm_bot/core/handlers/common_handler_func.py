@@ -132,7 +132,7 @@ async def publish_article_func(message: types.Message, state: FSMContext, bot: B
         await bot.send_photo(chat_id=chat_id, photo=photo, caption=caption)
         await write_is_publised_article(id_article)
         logger.info(f"Статья опубликована в канале")
-    await state.clear()
+
 
 async def publish_article_inst_func(message: types.Message, state: FSMContext, bot: Bot, is_publish: bool = False):
     """Публикация статьи в Телграмм канал"""
@@ -146,4 +146,4 @@ async def publish_article_inst_func(message: types.Message, state: FSMContext, b
         id_article = data.get("id_article")
         run_upload_instagram(photo_path=image_path, caption=caption, is_photo=True)
         logger.info(f"Статья опубликована в Инстаграмме")
-    await state.clear()
+
