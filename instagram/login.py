@@ -2,9 +2,9 @@ import logging
 import os
 
 from instagrapi import Client
-from config import TEST_LOGIN, INST_PASS
+from config import INST_LOGIN, INST_PASS
 
-USERNAME = TEST_LOGIN
+USERNAME = INST_LOGIN
 PASSWORD = INST_PASS
 SESSION_FILE = "session.json"  # файл для сохранения сессии
 logging.basicConfig(level=logging.INFO, format="%(asctime)s %(levelname)s: %(message)s")

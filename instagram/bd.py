@@ -56,70 +56,80 @@ VALUES (?, ?);
     conn.close()
 
 
-def read_to_like_from_bd(number_users: int = 1) -> List[str]:
-    """Выбираем пользователей для постановки Лайка им на пост, если его еще не лайкали"""
+def read_usernames_from_bd(number_users: int = 1, is_like=False, is_subscribe=False, is_comment=False) -> List[str]:
+    """Если is_like выбираем пользователей для постановки Лайка ему на последний пост, если его еще не лайкали
+    Если is_subscribe = True, то выбираются пользователя для подписки на них
+    """
     cur, conn = connect_db()
-    cur.execute("SELECT username FROM followers WHERE is_like=0 LIMIT ?", (number_users,))
+    if is_like:
+        cur.execute("SELECT username FROM followers WHERE is_like=0 LIMIT ?", (number_users,))
+    elif is_subscribe:
+        cur.execute("SELECT username FROM followers WHERE is_subscribe=0 and is_sent_request=0 LIMIT ?",
+                    (number_users,))
+    elif is_subscribe:
+        cur.execute("SELECT username FROM followers WHERE is_like_success=1 and is_comment=0 LIMIT ?",
+                    (number_users,))
     rows = cur.fetchall()
     conn.close()
     return [row[0] for row in rows] if rows else []
 
 
-def write_is_like_to_db(usernames: List[Tuple[str]]):
-    """Проставляет поле is_like в 1 для выбранных полльзователей,
-    is_like_succes в 1, если лайк был успешно поставлен"""
+def write_is_like_to_db(usernames: List[Tuple[str]], is_like_success: bool = False):
+    """Проставляет поле is_like в 1 для выбранных пользователей(что пользователь обрабатывался на лайк посту),
+    is_like_succes в 1 (если есть хоть один пост и лайк успешно поставлен)"""
     cur, conn = connect_db()
-    try:
-        cur.executemany("UPDATE followers SET is_like = 1 WHERE username = ?", usernames)
-        print("Единички поля is_like проставлены")
-    except Exception as e:
-        print(e)
-        print("Чет единички поля is_like не проставились. смотри write_like_to_db")
+
+    if is_like_success:
+        try:
+            cur.executemany("UPDATE followers SET is_like_success = 1 WHERE username = ?", usernames)
+            print("Единички поля is_like_success проставлены")
+        except Exception as e:
+            print(e)
+            print("Чет единички поля is_like_success не проставились. смотри write_is_like_success_to_db")
+    else:
+        try:
+            cur.executemany("UPDATE followers SET is_like = 1 WHERE username = ?", usernames)
+            print("Единички поля is_like проставлены")
+        except Exception as e:
+            print(e)
+            print("Чет единички поля is_like не проставились. смотри write_like_to_db")
+
     conn.commit()
     conn.close()
 
 
-def write_is_like_success_to_db(usernames_success: List[Tuple[str]]):
-    """Проставляет поле is_like в 1 для выбранных полльзователей,
-    is_like_succes в 1, если лайк был успешно поставлен"""
+def write_subscribes_to_db(usernames: List[Tuple[str]], is_sent_request: bool = False):
+    """Проставляет поле is_subscribe в 1 для выбранных пользователей, что на него удачно подписалось,
+    is_sent_request в 1, если был отправлен запрос на подписку"""
     cur, conn = connect_db()
-    try:
-        cur.executemany("UPDATE followers SET is_like_success = 1 WHERE username = ?", usernames_success)
-        print("Единички поля is_like_success проставлены")
-    except Exception as e:
-        print(e)
-        print("Чет единички поля is_like_success не проставились. смотри write_is_like_success_to_db")
+    if is_sent_request:
+        try:
+            cur.executemany("UPDATE followers SET is_sent_request = 1 WHERE username = ?", usernames)
+            print("Единички поля is_sent_request проставлены")
+        except Exception as e:
+            print(e)
+            print("Чет единички поля is_sent_request не проставились. смотри write_subscribes_to_db")
+    else:
+        try:
+            cur.executemany("UPDATE followers SET is_subscribe = 1 WHERE username = ?", usernames)
+            print("Единички поля is_subscribe проставлены")
+        except Exception as e:
+            print(e)
+            print("Чет единички поля is_subscribe не проставились. смотри write_subscribes_to_db")
     conn.commit()
     conn.close()
 
 
 if __name__ == '__main__':
     cur, conn = connect_db()
-    # print(read_to_like_from_bd(2))
-    # target_usernames = ['123', '321']
-    # print([(st,) for st in target_usernames])
+    print(read_usernames_from_bd(2, is_subscribe=True))
+    users = read_usernames_from_bd(2)
+
+
     # write_is_like_to_db([('aiden82932',)])
     # write_is_like_success_to_db([('aiden82932',)])
     # write_subscribe_to_bd([(1, "test", "testov", False)])
     # создаём таблицу (если ещё нет)
     # cur.execute("""
-    # CREATE TABLE IF NOT EXISTS followers (
-    #     id INTEGER PRIMARY KEY AUTOINCREMENT,
-    #     pk INTEGER UNIQUE,
-    #     username TEXT,
-    #     full_name TEXT,
-    #     is_private BOOLEAN,
-    #     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    #     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-    # )
-    # """)
-    # cur.execute("""
-    # CREATE TABLE IF NOT EXISTS progress (
-    #     id INTEGER PRIMARY KEY AUTOINCREMENT,
-    #     username TEXT,
-    #     last_cursor TEXT,
-    #     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    #     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-    # )
-    # """)
+
     # conn.commit()

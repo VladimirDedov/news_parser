@@ -1,53 +1,42 @@
+
 import time
 import random
 
 from instagram.bd import write_is_like_to_db
-from instagram.save_session import save_session
 from login import set_login
-from config import SLEEP_BETWEEN, SESSION_FILE
+from config import SLEEP_BETWEEN,SESSION_FILE
 from config import log
-from instagrapi import Client
 from bd import read_usernames_from_bd
+from instagrapi import Client
+from save_session import save_session
 
+def put_comment(username: str, cl: Client):
+    """Оставить коментарии под последней публикацией"""
+    text_comment = "Прикол!"
+    # Получаем ID пользователя
+    user = cl.user_info_by_username(username)
 
-def like_latest_media_of(username: str, cl: Client) -> bool:
-    """
-    Ставит лайк на последней медиа пользователя username.
-    Возвращает True при успехе, False при неудаче или если нет медиа.
-    """
-    time.sleep(20)
-    log.info("Processing user: %s", username)
-    try:
-        user = cl.user_info_by_username(username)
-        print(f"Юзер - {user}")
-    except Exception as e:
-        log.error("Failed to get user info for %s: %s", username, e)
-        return False
-
+    # Забираем последние посты напрямую через private_request
     data = cl.private_request(f"feed/user/{user.pk}/", params={"count": 1})
     items = data.get("items", [])
     print(items)
-
     if items:
-        media_id = items[0]["id"]  # тут сразу нужный id
-        cl.media_like(media_id)
-        print("Поставил лайк 👍")
-        return True
+        media_id = items[0]["id"]  # ID последнего поста
+        cl.media_comment(media_id, text_comment)
+        print(f"✅ Комментарий '{text_comment}' оставлен под последним постом {username}")
     else:
-        print("Нет постов у пользователя")
-        return False
-
+        print(f"❌ У пользователя {username} нет публикаций")
 
 def main():
     count = 0
     cl = set_login()  # Залогиниваемся
-    target_usernames = read_usernames_from_bd(25, is_like=True)
+    target_usernames = read_usernames_from_bd(25, is_comment=True)
     success_usernames = []
     print(target_usernames)
 
     for username in target_usernames:
         try:
-            success = like_latest_media_of(username, cl)
+            success = put_comment(username, cl)
             if success:
                 count += 1
                 success_usernames.append(username)
@@ -67,6 +56,3 @@ def main():
 
     # Сохраняем сессию
     save_session(cl)
-
-if __name__ == "__main__":
-    main()
