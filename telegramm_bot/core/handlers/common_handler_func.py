@@ -52,10 +52,12 @@ async def edit_article_with_ai_func(message: types.Message, state: FSMContext, i
     else:
         # Генерация картинки
         list_image_path = create_bing_image(prompt_for_image, id_article)
+
         if list_image_path is None:
             await message.answer(f"картинки не сгенерированы. ")
             await message.answer(f"Скорее всего запрос заблокирован Bing /edit - начать заново")
-            return
+            return False
+
         await message.answer(f"картинки сгенерированы. ")
 
         # отправляем картинки на выбор для обработки
@@ -68,6 +70,7 @@ async def edit_article_with_ai_func(message: types.Message, state: FSMContext, i
         await state.update_data(list_image_path=list_image_path)
 
         await state.set_state(state_fsm.id_image)
+    return True
 
 
 async def process_add_text_to_image_func(message: types.Message, state: FSMContext, id_imag=None):
@@ -146,4 +149,3 @@ async def publish_article_inst_func(message: types.Message, state: FSMContext, b
         id_article = data.get("id_article")
         run_upload_instagram(photo_path=image_path, caption=caption, is_photo=True)
         logger.info(f"Статья опубликована в Инстаграмме")
-

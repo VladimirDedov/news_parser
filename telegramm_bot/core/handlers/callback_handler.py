@@ -61,10 +61,11 @@ async def get_today_articles_call(callback: types.CallbackQuery):
 @callback_router.callback_query(ArticleCallbackFactory.filter())
 async def edit_article_call(callback: types.CallbackQuery, callback_data: ArticleCallbackFactory, state: FSMContext):
     """Выбор и запуск обработки статьи в ИИ"""
-    await callback.message.answer(f"Выбрана статья - {callback_data.id}")
+    # await callback.message.answer(f"Выбрана статья - {callback_data.id}")
     await callback.message.answer(f"Выбрана статья - {type(callback.message)}")
-    await edit_article_with_ai_func(callback.message, state, callback_data.id)
-
+    flag = await edit_article_with_ai_func(callback.message, state, callback_data.id)
+    if not flag:
+        await callback.message.answer(f"Картинки не были сгенерированы.", reply_markup=get_start_inline_kbd())
 
 @callback_router.callback_query(ImageCallbackFactory.filter())
 async def process_add_text_to_image_call(callback: types.CallbackQuery, callback_data: ArticleCallbackFactory,
