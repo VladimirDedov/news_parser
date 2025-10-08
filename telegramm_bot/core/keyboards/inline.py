@@ -48,13 +48,16 @@ def get_view_kbd() -> InlineKeyboardMarkup:
 
 def get_title_btn(
         article_id: int,
-        sizes: tuple = (1,),
+        sizes: tuple = (2,),
 ):
     inline_keyboard = InlineKeyboardBuilder()
 
     inline_keyboard.add(InlineKeyboardButton(text="👌 Обработать в ИИ",
                                              callback_data=ArticleCallbackFactory(action="view", id=article_id).pack()
-                                             ))
+                                             ),
+                        InlineKeyboardButton(text="👌 Пометить для рилс",
+                        callback_data=ArticleCallbackFactory(action="reels", id=article_id).pack()
+                        ))
 
     return inline_keyboard.adjust(*sizes).as_markup()
 

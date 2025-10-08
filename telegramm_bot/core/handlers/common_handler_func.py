@@ -4,8 +4,8 @@ from aiogram.fsm.context import FSMContext
 from aiogram.types import FSInputFile
 
 from config import CHAT_ID
-from ..database.orm_query import read_image_path_with_text
-from ..database.orm_query import write_is_publised_article
+from ..database.orm_query import read_image_path_with_text, read_image_paths
+from ..database.orm_query import write_is_publised_article, save_list_image_path_to_bd
 from ..fsm.fsm import Add_Neiro_Article as state_fsm
 from ai.edit_article_with_ai import create_neiro_article
 from ai.edit_article_with_ai import add_text
@@ -22,6 +22,7 @@ logger.info("Начинаю запуск бота")
 
 
 async def edit_article_with_ai_func(message: types.Message, state: FSMContext, id: int = None):
+    dct_for_write_to_bd_image_path = {}
     if not id:
         id = message.text
 
@@ -38,38 +39,41 @@ async def edit_article_with_ai_func(message: types.Message, state: FSMContext, i
     logger.info(f"Статья {id} обработана в нейросети")
     await message.answer(f"Начинаю генерацию картинок - {id}")
     logger.info(f"Начата генерация картинок для статьи {id}")
-    # Проверить существует ли картинка с текстом
-    image_path_with_text = await read_image_path_with_text(id_article)
 
-    if image_path_with_text:
-        await message.answer(f"Картинка была сгенерирована ранее - {id}")
-        await message.answer(f"Текст добавлен.", reply_markup=get_common_kbd({"Показать статью": "show_article",
-                                                                              "Cansel": "cansel"},
-                                                                             sizes=(2,)))
-        logger.info(f"Картинка для статьи {id} была сгенерирована ранее")
-        await state.update_data(image_path=image_path_with_text[0])
-        await state.set_state(state_fsm.show_result)
+    list_image_path= await read_image_paths(id_article)#получить пути картинок, если есть, чтобы не генерировать заново
+    print(f"Пути картинок - {list_image_path} , id_article - {id_article}")
+
+    if list_image_path:
+        await message.answer(f"Картинки была сгенерированы ранее - {id}")
     else:
-        # Генерация картинки
-        list_image_path = create_bing_image(prompt_for_image, id_article)
+        list_image_path = create_bing_image(prompt_for_image, id_article)# Генерация картинки
 
         if list_image_path is None:
             await message.answer(f"картинки не сгенерированы. ")
             await message.answer(f"Скорее всего запрос заблокирован Bing /edit - начать заново")
             return False
 
-        await message.answer(f"картинки сгенерированы. ")
+    await message.answer(f"картинки сгенерированы. ")
 
-        # отправляем картинки на выбор для обработки
-        for index, path in enumerate(list_image_path):
+    # отправляем картинки на выбор для обработки
+    for index, path in enumerate(list_image_path):
+        if path:
             photo = FSInputFile(path)
             await message.answer(f"{index}")
             await message.answer_photo(photo, reply_markup=get_image_kb(index))
 
-        # Запрашиваем номер картинки, для добавления текста
-        await state.update_data(list_image_path=list_image_path)
+    #Сохраняем пути картинок в БД
+    dct_for_write_to_bd_image_path['id_article']=id_article
+    for index, value in enumerate(list_image_path):
+        dct_for_write_to_bd_image_path[f"path_{index}"] = value
 
-        await state.set_state(state_fsm.id_image)
+    print(f"dct_for_write_to_bd_image_path - {dct_for_write_to_bd_image_path}")
+    await save_list_image_path_to_bd(dct_for_write_to_bd_image_path)
+
+    # Запрашиваем номер картинки, для добавления текста
+    await state.update_data(list_image_path=list_image_path)
+
+    await state.set_state(state_fsm.id_image)
     return True
 
 

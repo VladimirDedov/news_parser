@@ -49,8 +49,8 @@ def save_progress(username: str, last_cursor: int):
     """Сохраняем прогресс парсинга пользователей (последняя страница пагинации) в БД"""
     cur, conn = connect_db()
     cur.execute("""
-        INSERT OR REPLACE INTO progress (username, last_cursor)
-VALUES (?, ?);
+        UPDATE progress (username, last_cursor, updated_at)
+VALUES (?, ?, CURRENT_TIMESTAMP);
     """, (username, last_cursor))
     conn.commit()
     conn.close()

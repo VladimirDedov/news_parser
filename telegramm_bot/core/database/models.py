@@ -25,7 +25,8 @@ class Article(Base):
     image_text: Mapped[Optional[str]] = mapped_column(Text, default=None, nullable=True)
     is_view: Mapped[bool] = mapped_column(default=False)
     is_published: Mapped[bool] = mapped_column(default=False)
-
+    reels_text: Mapped[Optional[str]] = mapped_column(Text, default=None, nullable=True)
+    prepared_for_reels: Mapped[int] = mapped_column(default=0)
 
 class Image(Base):
     __tablename__ = 'image'

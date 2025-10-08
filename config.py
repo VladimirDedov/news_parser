@@ -16,3 +16,4 @@ PATH_LOG = os.getenv("PATH_LOG")
 INST_LOGIN = os.getenv("INST_LOGIN")#Логин инсты Kazahstan_news
 TEST_LOGIN = os.getenv("TEST_LOGIN")#Тестовый логин от vl_tik_tok
 INST_PASS = os.getenv("INST_PASS")
+PATH_FINAL_IMAGE_REELS=os.getenv("PATH_FINAL_IMAGE_REELS")

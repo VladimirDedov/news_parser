@@ -7,8 +7,9 @@ from .image_editor import add_text_to_image
 from typing import Tuple
 
 
-async def create_neiro_article(id) -> Tuple[str, str, str]:
-    """Обработка статьи с помощь ИИ и запись в БД"""
+
+async def create_neiro_article(id) -> Tuple[str, str, str, str]:
+    """Обработка статьи с помощью ИИ и запись в БД"""
 
     # Читаем название и текст статьи с бд если существует
     tuple_of_neiro_article = await get_exists_neiro_article(id)
@@ -29,12 +30,18 @@ async def create_neiro_article(id) -> Tuple[str, str, str]:
         image_text = get_context_from_ai(original_text, title=True, image_text=True)
         print("Генерирую промт для картинки")
         prompt_for_image = get_context_from_ai(text_ai, prompt=True)
+        print("Генерирую текст на reels")
+        reels_ai = get_context_from_ai(original_text, reels=True)
+        print(f"text reels - {reels_ai}")
+
 
         # Запись в БД обработанной статьи
-        list_neiro = [title_ai, text_ai, prompt_for_image, image_text]
+        list_neiro = [title_ai, text_ai, prompt_for_image, image_text, reels_ai]
         await write_article_to_bd(list_neiro, id_article, original=False)
 
     return image_text, id_article, prompt_for_image, text_ai
+
+
 
 
 async def add_text(image_path: str, image_text: str, id_article: str, list_image_path: str) -> str:

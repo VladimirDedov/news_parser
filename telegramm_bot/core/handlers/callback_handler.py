@@ -10,7 +10,7 @@ from .common_handler_func import publish_article_inst_func
 from .common_handler_func import process_add_text_to_image_func
 from .common_handler_func import publish_article_func
 
-from ..database.orm_query import read_all_today_article
+from ..database.orm_query import read_all_today_article, mark_artical_for_prepared_for_reels
 from ..keyboards.inline import get_view_kbd, get_title_btn, get_start_inline_kbd
 from ..factory.call_factory import ArticleCallbackFactory, ImageCallbackFactory
 
@@ -51,18 +51,28 @@ async def callback_start_parse_inform_call(callback: types.CallbackQuery):
 
 @callback_router.callback_query(F.data == "view")
 async def get_today_articles_call(callback: types.CallbackQuery):
+    """Выбираем список статей за сегодня, возле id в скобках помечена ли статья для рилс"""
     await callback.message.answer("Вот список не просмотренных статей за сегодня. /edit - ввести номер статьи для "
                                   "обработки")
-    dict_of_article = await read_all_today_article()
-    for id, article_title in dict_of_article.items():
-        await callback.message.answer(f"{id} - {article_title}", reply_markup=get_title_btn(article_id=id))
+    lst_of_article = await read_all_today_article()
+    for tpl in lst_of_article:
+        id, article_title, is_reels = tpl
+        await callback.message.answer(f"{id} ({is_reels})- {article_title}", reply_markup=get_title_btn(article_id=id))
 
+@callback_router.callback_query(ArticleCallbackFactory.filter(F.action == "reels"))
+async def mark_for_reels(callback: types.CallbackQuery, callback_data: ArticleCallbackFactory):
+    #  помечаем статью для рилс, поле prepared_for_reels ставим в 1
+    article_id = callback_data.id
+    try:
+        await mark_artical_for_prepared_for_reels(article_id)
+        await callback.answer("✅ Статья помечена для рилс!", show_alert=False)
+    except Exception as e:
+        print(f"Статья с id - {article_id} не помечена, ошбка - {e}")
 
 @callback_router.callback_query(ArticleCallbackFactory.filter())
 async def edit_article_call(callback: types.CallbackQuery, callback_data: ArticleCallbackFactory, state: FSMContext):
     """Выбор и запуск обработки статьи в ИИ"""
     # await callback.message.answer(f"Выбрана статья - {callback_data.id}")
-    await callback.message.answer(f"Выбрана статья - {type(callback.message)}")
     flag = await edit_article_with_ai_func(callback.message, state, callback_data.id)
     if not flag:
         await callback.message.answer(f"Картинки не были сгенерированы.", reply_markup=get_start_inline_kbd())
