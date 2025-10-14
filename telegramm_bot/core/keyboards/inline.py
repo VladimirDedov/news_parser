@@ -27,7 +27,15 @@ def get_start_inline_kbd() -> InlineKeyboardMarkup:
                 InlineKeyboardButton(text="✅ Edit", callback_data="edit"),
             ],
             [
+                InlineKeyboardButton(text="✅ PKZSK", callback_data="pkzsk"),
+                InlineKeyboardButton(text="✅ 7152", callback_data="sko_7152"),
+                InlineKeyboardButton(text="✅ ИнформКЗ", callback_data="inform"),
+            ],
+            [
                 InlineKeyboardButton(text="💥 Посмотреть статьи за сегодня", callback_data="view"),
+            ],
+            [
+                InlineKeyboardButton(text="💥 Обработать статьи для Reels", callback_data="get_reels_text_from_ai"),
             ]
         ]
     )
@@ -45,6 +53,15 @@ def get_view_kbd() -> InlineKeyboardMarkup:
     )
     return view_kbd
 
+def get_add_text_to_image_kbd() -> InlineKeyboardMarkup:
+    view_kbd = InlineKeyboardMarkup(
+        inline_keyboard=[
+            [
+                InlineKeyboardButton(text="💥 Добавить текст на картинки", callback_data="add_text_to_image_kbd"),
+            ]
+        ]
+    )
+    return view_kbd
 
 def get_title_btn(
         article_id: int,

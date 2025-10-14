@@ -24,7 +24,7 @@ def wrap_text(text, font, max_width, draw):
     return lines
 
 
-def draw_text_with_outline(draw, position, text, font, text_color="white", outline_color="black", outline_width=2):
+def draw_text_with_outline(draw, position, text, font, text_color="white", outline_color="black", outline_width=3):
     x, y = position
     # Рисуем контур (все соседние пиксели)
     for dx in range(-outline_width, outline_width + 1):
@@ -38,10 +38,9 @@ def draw_text_with_outline(draw, position, text, font, text_color="white", outli
 def add_text_to_image(image_path: str = '', text_for_image: str = '', id_article: str = '',
                       font_size: int = 80, line_spacing: int = 30, reels: bool = False) -> str:
     """Добавляем текст на выбранную картинку и возвращаю путь картинки с текстом"""
-    if reels:
-        PATH_FINAL_IMAGE = PATH_FINAL_IMAGE_REELS
+    path_final = PATH_FINAL_IMAGE_REELS if reels else PATH_FINAL_IMAGE
 
-    image_path_with_text = f"{PATH_FINAL_IMAGE}-{id_article}.jpeg"
+    image_path_with_text = f"{path_final}-{id_article}.jpeg"
     print(image_path_with_text)
     # Загружаем изображение
     img = Image.open(image_path)
@@ -70,7 +69,7 @@ def add_text_to_image(image_path: str = '', text_for_image: str = '', id_article
     return image_path_with_text
 
 
-async def main():
+async def add_text_to_reels_image():
     """Генерит картинки с надписью рилса, для создания видео"""
     list_reels_and_id_article = await read_reels_text_and_id_from_bd()
     print(list_reels_and_id_article)
@@ -92,7 +91,7 @@ async def main():
 
 
 if __name__ == "__main__":
-    asyncio.run(main())
+    asyncio.run(add_text_to_reels_image())
     # add_text_to_image(image_path='/home/vvv/Видео/Ютуб/Видео - факты/Животные/Вымирающие Дельфин, леопард/1/Дальневосточный леопард, сумчатый дьявол и дельфин вакаита на одном изображении в естественной среде.jpeg',
     #
     #                   text_for_image="Они ещё живы... но уже вымерли...",

@@ -27,6 +27,9 @@ class Article(Base):
     is_published: Mapped[bool] = mapped_column(default=False)
     reels_text: Mapped[Optional[str]] = mapped_column(Text, default=None, nullable=True)
     prepared_for_reels: Mapped[int] = mapped_column(default=0)
+    is_sko: Mapped[bool] = mapped_column(default=False)
+    is_astana: Mapped[bool] = mapped_column(default=False)
+    is_almata: Mapped[bool] = mapped_column(default=False)
 
 class Image(Base):
     __tablename__ = 'image'

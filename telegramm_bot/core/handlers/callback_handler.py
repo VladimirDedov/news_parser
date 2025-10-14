@@ -12,7 +12,10 @@ from .common_handler_func import publish_article_func
 
 from ..database.orm_query import read_all_today_article, mark_artical_for_prepared_for_reels
 from ..keyboards.inline import get_view_kbd, get_title_btn, get_start_inline_kbd
+from ..keyboards.inline import get_add_text_to_image_kbd
 from ..factory.call_factory import ArticleCallbackFactory, ImageCallbackFactory
+from ai.get_reels_text import get_reels_context_from_ai
+from ai.image_editor import add_text_to_reels_image
 
 callback_router = Router()
 
@@ -49,6 +52,30 @@ async def callback_start_parse_inform_call(callback: types.CallbackQuery):
                                   reply_markup=get_view_kbd())
 
 
+@callback_router.callback_query(F.data == "pkzsk")
+async def callback_start_parse_pkzsk_call(callback: types.CallbackQuery):
+    await callback.message.answer("💭 Парсинг статей с сайта PKZSK запущен")
+    await collect_data("https://pkzsk.info/")
+    await callback.message.answer("Парсинг статей с сайта PKZSK окончен. Посмотреть статьи за сегодня /view",
+                                  reply_markup=get_view_kbd())
+
+
+@callback_router.callback_query(F.data == "sko_7152")
+async def callback_start_parse_7152_call(callback: types.CallbackQuery):
+    await callback.message.answer("💭 Парсинг статей с сайта 7152 запущен")
+    await collect_data("https://www.7152.kz/news")
+    await callback.message.answer("Парсинг статей с сайта 7152 окончен. Посмотреть статьи за сегодня /view",
+                                  reply_markup=get_view_kbd())
+
+
+@callback_router.callback_query(F.data == "add_text_to_image_kbd")
+async def add_text_to_image_kbd(callback: types.CallbackQuery):
+    await callback.message.answer("💭 Добавляю текст на картинки Рилс")
+    await add_text_to_reels_image()
+    await callback.message.answer("Текст на картинки добавлен",
+                                  reply_markup=get_view_kbd())
+
+
 @callback_router.callback_query(F.data == "view")
 async def get_today_articles_call(callback: types.CallbackQuery):
     """Выбираем список статей за сегодня, возле id в скобках помечена ли статья для рилс"""
@@ -58,6 +85,15 @@ async def get_today_articles_call(callback: types.CallbackQuery):
     for tpl in lst_of_article:
         id, article_title, is_reels = tpl
         await callback.message.answer(f"{id} ({is_reels})- {article_title}", reply_markup=get_title_btn(article_id=id))
+
+
+@callback_router.callback_query(F.data == "get_reels_text_from_ai")
+async def get_text_for_reels(callback: types.CallbackQuery):
+    #  обработка статей в нейросети для генерации рилса и картинок
+    await callback.message.answer("Начинаю обработку статей для рилс!")
+    await get_reels_context_from_ai()
+    await callback.message.answer("Статьи обработаны!", reply_markup=get_add_text_to_image_kbd())
+
 
 @callback_router.callback_query(ArticleCallbackFactory.filter(F.action == "reels"))
 async def mark_for_reels(callback: types.CallbackQuery, callback_data: ArticleCallbackFactory):
@@ -69,6 +105,7 @@ async def mark_for_reels(callback: types.CallbackQuery, callback_data: ArticleCa
     except Exception as e:
         print(f"Статья с id - {article_id} не помечена, ошбка - {e}")
 
+
 @callback_router.callback_query(ArticleCallbackFactory.filter())
 async def edit_article_call(callback: types.CallbackQuery, callback_data: ArticleCallbackFactory, state: FSMContext):
     """Выбор и запуск обработки статьи в ИИ"""
@@ -76,6 +113,7 @@ async def edit_article_call(callback: types.CallbackQuery, callback_data: Articl
     flag = await edit_article_with_ai_func(callback.message, state, callback_data.id)
     if not flag:
         await callback.message.answer(f"Картинки не были сгенерированы.", reply_markup=get_start_inline_kbd())
+
 
 @callback_router.callback_query(ImageCallbackFactory.filter())
 async def process_add_text_to_image_call(callback: types.CallbackQuery, callback_data: ArticleCallbackFactory,

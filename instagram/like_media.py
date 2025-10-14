@@ -41,7 +41,7 @@ def like_latest_media_of(username: str, cl: Client) -> bool:
 def main():
     count = 0
     cl = set_login()  # Залогиниваемся
-    target_usernames = read_usernames_from_bd(25, is_like=True)
+    target_usernames = read_usernames_from_bd(5, is_like=True)
     success_usernames = []
     print(target_usernames)
 

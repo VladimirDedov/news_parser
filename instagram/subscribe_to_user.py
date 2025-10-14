@@ -21,7 +21,7 @@ def follow_user(username: str, cl: Client)-> bool:
 
 if __name__ == '__main__':
     cl = set_login()  # Залогиниваемся
-    target_usernames = read_usernames_from_bd(3, is_subscribe=True)#Получаем пользователей на кого подписаться
+    target_usernames = read_usernames_from_bd(8, is_subscribe=True)#Получаем пользователей на кого подписаться
     success_usernames = []
     sent_request_usernames = []
     print(target_usernames)

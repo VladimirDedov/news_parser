@@ -10,7 +10,7 @@ from .models import Image, Article
 
 
 async def write_article_to_bd(list_of_data: list, id_article: str = None, original: bool =
-True):
+True, is_sko: bool = False, is_astana: bool = False, is_almata: bool = False):
     async with AsyncSession(engine) as session:
         if original:
             try:
@@ -27,6 +27,9 @@ True):
                         url_article=list_of_data[1],
                         title_original_article=list_of_data[2],
                         text_original_article=list_of_data[3],
+                        is_sko=True if is_sko else False,
+                        is_astana=True if is_astana else False,
+                        is_almata=True if is_almata else False,
                     )
                     print('commit article')
                     session.add(new_article)
