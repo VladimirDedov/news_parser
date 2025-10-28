@@ -22,6 +22,7 @@ callback_router = Router()
 
 @callback_router.callback_query(F.data == "nurkz")
 async def callback_start_parse_nurkz_call(callback: types.CallbackQuery):
+    """"""
     await callback.message.answer(" 💭 Парсинг статей с сайта NURKZ запущен")
     await collect_data("https://www.nur.kz/")
     await callback.message.answer("Парсинг статей с сайта NURKZ окончен. Посмотреть статьи за сегодня /view",
@@ -70,6 +71,7 @@ async def callback_start_parse_7152_call(callback: types.CallbackQuery):
 
 @callback_router.callback_query(F.data == "add_text_to_image_kbd")
 async def add_text_to_image_kbd(callback: types.CallbackQuery):
+    """Добавление текста на картинку для Reels"""
     await callback.message.answer("💭 Добавляю текст на картинки Рилс")
     await add_text_to_reels_image()
     await callback.message.answer("Текст на картинки добавлен",
@@ -118,16 +120,19 @@ async def edit_article_call(callback: types.CallbackQuery, callback_data: Articl
 @callback_router.callback_query(ImageCallbackFactory.filter())
 async def process_add_text_to_image_call(callback: types.CallbackQuery, callback_data: ArticleCallbackFactory,
                                          state: FSMContext):
+    """Добавление текста на картнку для статьи"""
     await process_add_text_to_image_func(callback.message, state, callback_data.id)
 
 
 @callback_router.callback_query(F.data == "show_article")
 async def show_result_article_call(callback: types.CallbackQuery, state: FSMContext):
+    """Показать статью в боте"""
     await show_result_article_func(callback.message, state, True)
 
 
 @callback_router.callback_query(F.data == "is_publish")
 async def publish_article_call(callback: types.CallbackQuery, state: FSMContext, bot: Bot):
+    """Публикация статьи в телеграмм канале"""
     await publish_article_func(callback.message, state, bot, True)
     await callback.message.answer('Статья опубликована в канале')
     await callback.message.answer("Создатель, приветствую тебя!", reply_markup=get_start_inline_kbd())
@@ -136,6 +141,7 @@ async def publish_article_call(callback: types.CallbackQuery, state: FSMContext,
 
 @callback_router.callback_query(F.data == "is_publish_inst")
 async def publish_article_inst_call(callback: types.CallbackQuery, state: FSMContext, bot: Bot):
+    """Публикация в канале и инсте, если выбрано опудбликовать в Инстре"""
     await publish_article_func(callback.message, state, bot, True)  # Опубликовать в канале телеги
     await callback.message.answer('Статья опубликована в канале Телеграмма')
     await publish_article_inst_func(callback.message, state, bot, True)  # Опубликовать в Инсте

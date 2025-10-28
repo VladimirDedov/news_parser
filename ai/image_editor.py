@@ -36,7 +36,7 @@ def draw_text_with_outline(draw, position, text, font, text_color="white", outli
 
 
 def add_text_to_image(image_path: str = '', text_for_image: str = '', id_article: str = '',
-                      font_size: int = 80, line_spacing: int = 30, reels: bool = False) -> str:
+                      font_size: int = 60, line_spacing: int = 30, reels: bool = False) -> str:
     """Добавляем текст на выбранную картинку и возвращаю путь картинки с текстом"""
     path_final = PATH_FINAL_IMAGE_REELS if reels else PATH_FINAL_IMAGE
 

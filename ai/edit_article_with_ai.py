@@ -8,14 +8,14 @@ from typing import Tuple
 
 
 
-async def create_neiro_article(id) -> Tuple[str, str, str, str]:
+async def create_neiro_article(id) -> Tuple[str, str, str, str, str]:
     """Обработка статьи с помощью ИИ и запись в БД"""
 
     # Читаем название и текст статьи с бд если существует
     tuple_of_neiro_article = await get_exists_neiro_article(id)
 
     if all(tuple_of_neiro_article):
-        image_text, id_article, prompt_for_image, text_ai = tuple_of_neiro_article
+        image_text, id_article, prompt_for_image, text_ai, reels_ai = tuple_of_neiro_article
     else:
         id_article, original_title, original_text = await read_from_bd_origin_article(id)  # продумать логику
         print(id_article)
@@ -39,7 +39,7 @@ async def create_neiro_article(id) -> Tuple[str, str, str, str]:
         list_neiro = [title_ai, text_ai, prompt_for_image, image_text, reels_ai]
         await write_article_to_bd(list_neiro, id_article, original=False)
 
-    return image_text, id_article, prompt_for_image, text_ai
+    return image_text, id_article, prompt_for_image, text_ai, reels_ai
 
 
 

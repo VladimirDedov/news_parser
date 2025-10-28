@@ -18,6 +18,7 @@ def get_inline_kbd(article_id: str) -> InlineKeyboardMarkup:
 
 
 def get_start_inline_kbd() -> InlineKeyboardMarkup:
+    """Стартовая клавиатура"""
     start_kbd = InlineKeyboardMarkup(
         inline_keyboard=[
             [
@@ -92,6 +93,7 @@ def get_image_kb(index: int,
 
 def get_common_kbd(btns: dict,
                    sizes: tuple = (1,)):
+    """Формирует клавиатуру из словаря"""
     inline_keyboard = InlineKeyboardBuilder()
     smile = "👌"
     for key, item in btns.items():

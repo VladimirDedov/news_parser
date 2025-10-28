@@ -11,6 +11,7 @@ from .models import Image, Article
 
 async def write_article_to_bd(list_of_data: list, id_article: str = None, original: bool =
 True, is_sko: bool = False, is_astana: bool = False, is_almata: bool = False):
+    """Пишет оригинальную и обработанные статьи в БД"""
     async with AsyncSession(engine) as session:
         if original:
             try:
@@ -64,15 +65,18 @@ True, is_sko: bool = False, is_astana: bool = False, is_almata: bool = False):
 
 
 async def get_exists_neiro_article(id) -> Tuple[str, str, str]:
+    """Возвращает список статей обработанных в нейросети за сегодня"""
     async with AsyncSession(engine) as session:
         query = await session.execute(
-            select(Article.image_text, Article.id_article, Article.prompt_image, Article.text_neiro_article).where(
-                Article.id == id)
+            select(Article.image_text, Article.id_article, Article.prompt_image, Article.text_neiro_article,
+                   Article.reels_text)
+            .where(Article.id == id)
         )
         return query.first()
 
 
 async def write_image_to_bd(dict_of_data: Dict[str, str]):
+    """Запись пути картинки в БД"""
     async with AsyncSession(engine) as session:
         try:
             result = await session.execute(
@@ -94,6 +98,7 @@ async def write_image_to_bd(dict_of_data: Dict[str, str]):
 
 
 async def write_is_publised_article(id_article):
+    """Помечает статью как опубликованную"""
     async with AsyncSession(engine) as session:
         try:
             await session.execute(
@@ -107,6 +112,7 @@ async def write_is_publised_article(id_article):
 
 
 async def mark_artical_for_prepared_for_reels(id: int):
+    """Помечает статью для обработки для Reels"""
     async with AsyncSession(engine) as session:
         try:
             await session.execute(
@@ -120,6 +126,7 @@ async def mark_artical_for_prepared_for_reels(id: int):
 
 
 async def write_reeels_text_to_bd(id_article: str, reels_text: str, prompt_image: str):
+    """Пишет текст Reels для статьи в БД"""
     async with AsyncSession(engine) as session:
         try:
             await session.execute(
@@ -133,6 +140,7 @@ async def write_reeels_text_to_bd(id_article: str, reels_text: str, prompt_image
 
 
 async def save_list_image_path_to_bd(dct_for_write_to_bd_image_path: Dict[str, str]):
+    """Сохраняет список путей сгенерированных картинок в БД"""
     async with AsyncSession(engine) as session:
         try:
             new_article = Image(
@@ -166,6 +174,7 @@ async def read_all_today_article() -> dict[str, str]:
 
 
 async def read_from_bd_origin_article(id: str) -> Tuple[str, str, str]:
+    """Возвращает данные оригинальной статьи по ID"""
     async with AsyncSession(engine) as session:
         article = await session.execute(
             select(Article.id_article, Article.title_original_article, Article.text_original_article).where(
@@ -205,6 +214,7 @@ async def read_image_paths(id_article: str) -> str:
 
 
 async def read_image_path_with_text(id_article: str) -> str:
+    """Возвращает путь картинки с текстом для статьи по ID"""
     async with AsyncSession(engine) as session:
         query = await session.execute(
             select(Image.image_path_with_text).where(Image.id_article == id_article)
@@ -214,6 +224,7 @@ async def read_image_path_with_text(id_article: str) -> str:
 
 
 async def read_reels_text_and_id_from_bd() -> List[Tuple[str]]:
+    """Возвращает текст Рилса и id"""
     async with AsyncSession(engine) as session:
         today = date.today()
         result = await session.execute(

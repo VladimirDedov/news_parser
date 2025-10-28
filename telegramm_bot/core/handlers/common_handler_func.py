@@ -31,10 +31,11 @@ async def edit_article_with_ai_func(message: types.Message, state: FSMContext, i
     await message.answer(f"Начинаю обработку статьи - {id}")
 
     # Обработка статьи нейросетью
-    image_text, id_article, prompt_for_image, article_neiro_text = await create_neiro_article(id)
+    image_text, id_article, prompt_for_image, article_neiro_text, text_reels_ai = await create_neiro_article(id)
     await state.update_data(image_text=image_text)
     await state.update_data(id_article=id_article)
     await state.update_data(article_neiro_text=article_neiro_text)
+    await state.update_data(text_reels_ai=text_reels_ai)
     await message.answer(f"Статья обработана в нейросети")
     logger.info(f"Статья {id} обработана в нейросети")
     await message.answer(f"Начинаю генерацию картинок - {id}")
@@ -86,7 +87,7 @@ async def process_add_text_to_image_func(message: types.Message, state: FSMConte
     logger.info(f"Выбрана картинка для добавления текста {id_imag}")
     data = await state.get_data()
     image_path = data.get("list_image_path")[id_imag]
-    image_text = data.get("image_text")
+    image_text = data.get("text_reels_ai")
     id_article = data.get("id_article")
 
     list_image_path = data.get("list_image_path")
